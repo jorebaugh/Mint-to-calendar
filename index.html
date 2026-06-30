@@ -114,6 +114,7 @@
   .bar input[type=text]:focus{outline:none;border-color:var(--teal)}
   input[type=checkbox]{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}
   .count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--slate)}
+  .ver{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--slate);opacity:.7;text-align:center}
   .addbox{background:var(--amber-soft);border:1px solid #EBCBA0;border-radius:12px;padding:13px 15px;margin-bottom:16px}
   .addbox .addhead b{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14.5px;color:var(--ink)}
   .addbox .adddesc{font-size:12.5px;color:#7A4A12;line-height:1.5;margin:5px 0 0}
@@ -123,6 +124,7 @@
   .addrow input[type=text]{max-width:130px}
   .addrow input:focus{outline:none;border-color:var(--amber)}
   .addrow .dash{color:var(--slate);opacity:.6}
+  .addbox .addnote{font-size:11.5px;color:#7A4A12;opacity:.9;line-height:1.5;margin:12px 0 0}
   .count b{color:var(--teal-dk)}
 
   /* Strips */
@@ -373,6 +375,7 @@
         <input type="text" id="addLabel" value="Working" placeholder="Working">
         <button class="btn ghost" id="addBtn">Add block</button>
       </div>
+      <p class="addnote"><b>The “add a block” button is a joke about calendar privacy</b> — and, fine, about golf. Manufacturing alibis is a <b>you</b> problem, not a software feature. We don’t endorse penciling in a “Working” day to chase a little white ball while your better half pictures you heroically in the sim. We just make the calendar entries; what you do with them is between you, your conscience, and your scorecard.</p>
     </div>
 
     <div class="export">
@@ -417,16 +420,15 @@
   </section>
 
   <footer>
-    <b>Not affiliated with, endorsed by, or connected to FedEx, Mint, or any employer</b> — just one instructor trying to make a fellow instructor's day slightly less annoying. Free, no accounts, no tracking, no catch.
-    It's a convenience, not a system of record, so eyeball every event against the official schedule before you bet a show time on it.
+    <p class="feedback"><b>Not affiliated with, endorsed by, or connected to FedEx, Mint, or any employer</b> — just one instructor trying to make a fellow instructor's day slightly less annoying. Free, no accounts, no tracking, no catch. It's a convenience, not a system of record, so eyeball every event against the official schedule before you bet a show time on it.</p>
     <p class="feedback"><b>Found a bug, a brilliant idea, or just want to argue about the shade of orange?</b> <a href="mailto:JOREBAUGH@gmail.com?subject=Mint%20Schedule%20feedback&body=Tick%20whatever%20applies%20%28or%20ignore%20this%20and%20freestyle%29%3A%0A%0A%5B%20%5D%20It%20worked%20and%20I%20have%20warm%20feelings.%0A%5B%20%5D%20Something%20broke.%20Right%20before%20it%20broke%2C%20I%3A%0A%5B%20%5D%20Idea%20/%20feature%20I%27d%20love%3A%0A%5B%20%5D%20The%20orange%20is%20the%20wrong%20orange.%0A%5B%20%5D%20Just%20saying%20hi.%0A%0ADetails%20%28screenshots%20welcome%29%3A%0A">Send Jesse the feedback →</a> Problems, praise, and feature wishes all land in the same inbox, where they are read with great seriousness and zero promises.</p>
-    <p class="feedback" style="margin-top:10px"><b>The “add a block” button is a joke about calendar privacy</b> — and, fine, about golf. Manufacturing alibis is a you problem, not a software feature. We do not endorse penciling in a “Working” day to go chase a little white ball while your better half pictures you heroically in the sim. We just make the calendar entries; what you do with them is between you, your conscience, and your scorecard.</p>
+    <p class="ver">Mint → Calendar — version <span id="verStamp">…</span></p>
   </footer>
 </div>
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-9";  // bumped each release so the app can flag updates
+const BUILD="2026.06.30-11";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -514,7 +516,7 @@ function parseSchedule(input){
     else if(c.kind==='main'){
       if(pend && pend.name===null){ pend.name=sessionLabel(seg.text); pend.sim=c.sim||'MEM'; pend.role=c.role; pend.endDate=seg.date; pend.end=seg.end; }
       else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.text),sim:c.sim||'MEM',role:c.role,category:'training'}); }
-    } else if(c.kind==='dbrf'){ if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; } }
+    } else if(c.kind==='dbrf'){ if(pend){ if(pend.name){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); } pend=null; } }
   }
   flush();
   events.forEach(e=>{ e.include=e.category==='training'; });
@@ -541,7 +543,7 @@ function parseChanges(text){
     else if(c.kind==='main'){
       if(pend && pend.name===null){ pend.name=sessionLabel(seg.desc); pend.role=c.role; pend.sim=c.sim||''; pend.endDate=seg.date; pend.end=seg.end; }
       else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.desc),sim:c.sim||'',role:c.role,category:'training'}); }
-    } else if(c.kind==='dbrf'){ if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; } }
+    } else if(c.kind==='dbrf'){ if(pend){ if(pend.name){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); } pend=null; } }
   }
   flush();
   events.forEach(e=>{ e.include=true; });
@@ -673,7 +675,7 @@ function hideNote(){ $('#note').className='note'; }
 
 function loadEvents(events){
   if(!events.length){
-    showNote("Hmm, I couldn't find any events. Make sure you copied the whole schedule email (the part with the dates and times), then paste and try again.","err");
+    showNote("Hmm — I didn't find any events in that. Two things to check: (1) copy the WHOLE email — tap inside it, Select All, Copy — including the schedule list further down, and (2) make sure you’re on the latest version, shown at the very bottom of this page.","err");
     $('#panel').classList.remove('show'); return;
   }
   EVENTS=events; applyToggles(); render();
@@ -681,7 +683,7 @@ function loadEvents(events){
     showNote("Also removed from your schedule \u2014 you may want to delete these from your calendar: "+LAST_REMOVED.join(', ')+".","info");
   else hideNote();
   $('#panel').classList.add('show');
-  $('#panel').scrollIntoView({behavior:'smooth',block:'start'});
+  try{ $('#panel').scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
 }
 
 function parsePasted(){
@@ -737,6 +739,7 @@ async function checkUpdate(){
 }
 const _ub=$('#updateBtn'); if(_ub) _ub.onclick=()=>location.replace(_bust());
 checkUpdate();
+const _vs=$('#verStamp'); if(_vs) _vs.textContent=BUILD;
 const _purl=location.origin+location.pathname;
 const _pu=$('#pageUrl'); if(_pu) _pu.textContent=_purl;
 const _cl=$('#copyLink');
