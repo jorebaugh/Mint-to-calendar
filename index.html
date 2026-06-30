@@ -229,6 +229,14 @@
     border:1px solid var(--line);border-radius:10px;padding:10px 14px;line-height:1.55}
   .trouble b{color:var(--ink);font-weight:600}
   .trouble a{color:var(--teal-dk);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
+  .linkrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:9px}
+  .linkrow code{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--line-soft);
+    padding:6px 9px;border-radius:6px;color:var(--ink);word-break:break-all;flex:1;min-width:120px}
+  .linkrow button{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:7px;
+    padding:6px 13px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .linkrow button:hover{border-color:var(--teal);color:var(--teal-dk)}
+  .linkrow button.copied{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-dk)}
   .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
   .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;flex-direction:column}
   .hcard b{display:flex;align-items:flex-start;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
@@ -258,7 +266,10 @@
     <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
   </header>
 
-  <p class="trouble"><b>Stuck, or seeing an old version?</b> <a id="reloadFresh" href="#">Reload the latest →</a> &nbsp;·&nbsp; and if it's saved to your home screen, delete that icon and add it again.</p>
+  <div class="trouble">
+    <b>Out of date, or not updating?</b> If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
+    <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
+  </div>
 
   <section class="how">
     <h2>How it works</h2>
@@ -617,6 +628,15 @@ $('#incOff').onchange=()=>{applyToggles();render();};
 $('#incAvail').onchange=()=>{applyToggles();render();};
 $('#tz').onchange=render;
 const _rf=$('#reloadFresh'); if(_rf) _rf.onclick=e=>{ e.preventDefault(); location.replace(location.pathname+'?v='+Date.now()); };
+const _purl=location.origin+location.pathname;
+const _pu=$('#pageUrl'); if(_pu) _pu.textContent=_purl;
+const _cl=$('#copyLink');
+if(_cl) _cl.onclick=async()=>{
+  try{ await navigator.clipboard.writeText(_purl); }
+  catch(e){ const r=document.createRange(); r.selectNode(_pu); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  _cl.textContent='Copied \u2713'; _cl.classList.add('copied');
+  setTimeout(()=>{ _cl.textContent='Copy link'; _cl.classList.remove('copied'); },1800);
+};
 
 async function exportICS(){
   if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected \u2014 tick at least one event above.","err"); return; }
