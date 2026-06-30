@@ -227,6 +227,12 @@
   .ihint b{color:var(--ink);font-weight:600}
   .trouble{margin-top:16px;font-size:13px;color:var(--slate);background:var(--surface);
     border:1px solid var(--line);border-radius:10px;padding:10px 14px;line-height:1.55}
+  .trouble summary{cursor:pointer;font-weight:600;color:var(--ink);list-style:none;
+    display:flex;align-items:center;gap:9px}
+  .trouble summary::-webkit-details-marker{display:none}
+  .trouble summary::before{content:"▸";color:var(--slate);font-size:11px;transition:transform .15s}
+  .trouble[open] summary::before{transform:rotate(90deg)}
+  .trouble .tbody{margin-top:10px}
   .trouble b{color:var(--ink);font-weight:600}
   .trouble a{color:var(--teal-dk);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
   .linkrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:9px}
@@ -266,10 +272,12 @@
     <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
   </header>
 
-  <div class="trouble">
-    <b>Out of date, or not updating?</b> If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
-    <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
-  </div>
+  <details class="trouble">
+    <summary>Out of date, or not updating?</summary>
+    <div class="tbody">If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
+      <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
+    </div>
+  </details>
 
   <section class="how">
     <h2>How it works</h2>
