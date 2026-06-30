@@ -334,7 +334,7 @@
   </div>
 
   <ol class="steps">
-    <li><span class="n">1</span><div><b>Copy your schedule email.</b> Open the “your schedule changed” email, select all, and copy it — the whole thing, headers and all, is fine.</div></li>
+    <li><span class="n">1</span><div><b>Copy your schedule email.</b> Open the email — the full “your schedule changed” schedule <i>or</i> a mid‑month “changes” list, both work — select all, and copy it. The whole thing, headers and all, is fine.</div></li>
     <li><span class="n">2</span><div><b>Paste it above</b> and tap <b>Make my calendar</b>. Each brief‑to‑debrief becomes one event, named by its period with the sim as the location. Click any name or sim to fix it; the toggles up top control reserve, available, and off/block days.</div></li>
     <li><span class="n">3</span><div><b>Send it to your calendar.</b> On <b>iPhone/iPad</b>, tap <b>Add to Apple Calendar</b> and pick Calendar in the share sheet. On a <b>Mac/PC</b> the <code>.ics</code> downloads — open it. Or tap <code>G ↗</code> on any row for Google.</div></li>
   </ol>
@@ -426,11 +426,12 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-8";  // bumped each release so the app can flag updates
+const BUILD="2026.06.30-9";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 let EVENTS = [];
+let LAST_REMOVED = [];
 
 /* ---------- paste text -> events ---------- */
 const SIM_RE=/B77[SC]\d+|B777FPT\d+/i;
@@ -471,6 +472,10 @@ function normalize(s){
 }
 function parseSchedule(input){
   let text=normalize(Array.isArray(input)?input.join('\n'):input);
+  LAST_REMOVED=[];
+  const hasSched=/in the following please find your schedule/i.test(text);
+  const isChange=/\b(?:Added|Removed|Changed)\b/i.test(text) && /\(\d{2}\.\d{2}\.\d{4}\s+\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\)/.test(text);
+  if(!hasSched && isChange) return parseChanges(text);
   const mk=text.match(/in the following please find your schedule[\s\S]*?:/i);
   if(mk) text=text.slice(text.indexOf(mk[0])+mk[0].length);
   text=text.replace(/(\d{2}\.\d{2}\.\d{4})/g,'\n$1 ')
@@ -513,6 +518,33 @@ function parseSchedule(input){
   }
   flush();
   events.forEach(e=>{ e.include=e.category==='training'; });
+  events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
+  return events;
+}
+function parseChanges(text){
+  LAST_REMOVED=[];
+  const re=/(Added|Removed|Changed)\b([\s\S]*?)\((\d{2})\.(\d{2})\.(\d{4})\s+(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\)/gi;
+  const segs=[]; let m;
+  while((m=re.exec(text))){
+    segs.push({action:m[1].toLowerCase(), desc:m[2].replace(/\s+/g,' ').trim(),
+      date:{mm:m[3],dd:m[4],yyyy:m[5]}, start:pad(m[6]), end:pad(m[7])});
+  }
+  const events=[]; let pend=null;
+  const flush=()=>{ if(pend){ if(pend.name) events.push(pend); pend=null; } };
+  for(const seg of segs){
+    if(seg.action==='removed'){ flush(); LAST_REMOVED.push(sessionLabel(seg.desc)+' '+(+seg.date.mm)+'/'+(+seg.date.dd)); continue; }
+    const c=classify(seg.desc);
+    if(c.adminCat && c.kind==='main' && !seg.desc.includes('/')){
+      flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.desc),sim:'',role:c.role,category:c.adminCat}); continue;
+    }
+    if(c.kind==='brf'){ flush(); pend={startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:null,sim:'',role:c.role,category:'training'}; }
+    else if(c.kind==='main'){
+      if(pend && pend.name===null){ pend.name=sessionLabel(seg.desc); pend.role=c.role; pend.sim=c.sim||''; pend.endDate=seg.date; pend.end=seg.end; }
+      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.desc),sim:c.sim||'',role:c.role,category:'training'}); }
+    } else if(c.kind==='dbrf'){ if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; } }
+  }
+  flush();
+  events.forEach(e=>{ e.include=true; });
   events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   return events;
 }
@@ -645,7 +677,10 @@ function loadEvents(events){
     $('#panel').classList.remove('show'); return;
   }
   EVENTS=events; applyToggles(); render();
-  hideNote(); $('#panel').classList.add('show');
+  if(LAST_REMOVED && LAST_REMOVED.length)
+    showNote("Also removed from your schedule \u2014 you may want to delete these from your calendar: "+LAST_REMOVED.join(', ')+".","info");
+  else hideNote();
+  $('#panel').classList.add('show');
   $('#panel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
