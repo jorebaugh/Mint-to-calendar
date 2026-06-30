@@ -288,9 +288,9 @@
       <button class="btn ghost" id="clear">Start over</button>
     </div>
     <p class="help">
-      <b>Apple (Mac &amp; iPhone):</b> tap <b>Add to Apple Calendar</b> — Calendar opens and asks to add the events, nothing to download. &nbsp;
-      <b>Outlook:</b> tap <b>Download .ics</b> and open the file. &nbsp;
-      <b>Google:</b> use <code>G ↗</code> on a row, or import the <code>.ics</code> at Google Calendar → Settings → Import.
+      <b>iPhone / iPad:</b> tap <b>Add to Apple Calendar</b>, then choose <b>Calendar</b> in the share sheet to add them all. &nbsp;
+      <b>Mac / Windows:</b> the <code>.ics</code> downloads — open it to add to Calendar or Outlook. &nbsp;
+      <b>Google:</b> tap <code>G ↗</code> on a row, or import the <code>.ics</code> at Google Calendar → Settings → Import.
     </p>
 
     <div class="tip">
@@ -633,22 +633,31 @@ $('#incReserve').onchange=()=>{applyToggles();render();};
 $('#incOff').onchange=()=>{applyToggles();render();};
 $('#tz').onchange=render;
 
-$('#dl').onclick=()=>{
-  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected to export.","err"); return; }
-  const blob=new Blob([buildICS()],{type:"text/calendar;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download="schedule.ics"; document.body.appendChild(a); a.click();
-  a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
-};
-$('#addApple').onclick=()=>{
-  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected to add.","err"); return; }
-  // open the calendar file so the OS hands it to Calendar (no 'download' = no trip to the Downloads folder)
-  const a=document.createElement('a');
-  a.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(buildICS());
-  a.target='_blank'; a.rel='noopener';
+async function exportICS(){
+  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected \u2014 tick at least one event above.","err"); return; }
+  const ics=buildICS();
+  const fname="schedule.ics";
+  // iPhone/iPad: hand the .ics to the share sheet so you can pick "Calendar / Add All to Calendar"
+  try{
+    if(window.File && navigator.canShare){
+      const file=new File([ics],fname,{type:"text/calendar"});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file]});
+        return;
+      }
+    }
+  }catch(err){
+    if(err && err.name==='AbortError') return;   // user closed the share sheet
+    // otherwise fall through to a normal download
+  }
+  // Mac / Windows / fallback: download the file (open it to add to Calendar, or import to Outlook/Google)
+  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
+  const a=document.createElement('a'); a.href=url; a.download=fname;
   document.body.appendChild(a); a.click(); a.remove();
-};
+  setTimeout(()=>URL.revokeObjectURL(url),8000);
+}
+$('#addApple').onclick=exportICS;
+$('#dl').onclick=exportICS;
 $('#clear').onclick=()=>{
   EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value='';
   $('#pasteBox').classList.remove('show'); fileInput.value=''; hideNote();
