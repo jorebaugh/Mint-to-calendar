@@ -212,6 +212,23 @@
   .how h2,.install h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
     letter-spacing:-.01em;margin:0 0 4px}
   .how .sub,.install .sub{color:var(--slate);font-size:14px;margin:0 0 18px}
+  .install-list{display:flex;flex-direction:column;gap:10px}
+  .irow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:var(--surface);
+    border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .irow .plat{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--ink);
+    min-width:148px;display:flex;align-items:baseline;gap:8px}
+  .irow .plat small{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;
+    color:var(--slate);font-weight:500;text-transform:uppercase}
+  .seq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--slate)}
+  .seq .k{background:var(--teal-soft);color:var(--teal-dk);border-radius:6px;padding:3px 9px;
+    font-family:'JetBrains Mono',monospace;font-weight:600;font-size:11.5px;white-space:nowrap}
+  .seq .arr{color:var(--slate);opacity:.45;font-weight:700}
+  .ihint{margin:14px 0 0;font-size:12.5px;color:var(--slate);line-height:1.6}
+  .ihint b{color:var(--ink);font-weight:600}
+  .trouble{margin-top:16px;font-size:13px;color:var(--slate);background:var(--surface);
+    border:1px solid var(--line);border-radius:10px;padding:10px 14px;line-height:1.55}
+  .trouble b{color:var(--ink);font-weight:600}
+  .trouble a{color:var(--teal-dk);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
   .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
   .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;flex-direction:column}
   .hcard b{display:flex;align-items:flex-start;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
@@ -240,6 +257,8 @@
     <p class="lede">Feed it the schedule email Mint sends you — the one you'd otherwise retype into your calendar by hand, event by event, like some kind of pioneer. It hands back a tidy calendar file for Apple, Google, or Outlook, every brief‑through‑debrief rolled into one event, named by its period, with the sim as the location.</p>
     <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
   </header>
+
+  <p class="trouble"><b>Stuck, or seeing an old version?</b> <a id="reloadFresh" href="#">Reload the latest →</a> &nbsp;·&nbsp; and if it's saved to your home screen, delete that icon and add it again.</p>
 
   <div class="inputzone">
     <textarea id="pasteArea" placeholder="Paste your whole schedule email here…"></textarea>
@@ -319,21 +338,22 @@
 
   <section class="install">
     <h2>Put it on your home screen</h2>
-    <p class="sub">Add it once and it opens like a real app — full screen, its own icon, no URL to remember.</p>
-    <div class="hgrid">
-      <div class="hcard">
-        <b>iPhone / iPad</b>
-        <p>In Safari, tap the <b>Share</b> button (the square with an up arrow), then <b>Add to Home Screen</b> → <b>Add</b>. The orange‑and‑purple icon lands on your home screen.</p>
+    <p class="sub">Add it once and it opens like a real app — full screen, its own icon, no URL to type.</p>
+    <div class="install-list">
+      <div class="irow">
+        <div class="plat">iPhone / iPad <small>Safari · Chrome</small></div>
+        <div class="seq"><span class="k">Share</span><span class="arr">→</span><span class="k">Add to Home Screen</span><span class="arr">→</span><span class="k">Add</span></div>
       </div>
-      <div class="hcard">
-        <b>Android</b>
-        <p>In Chrome, tap the <b>⋮</b> menu, then <b>Add to Home screen</b> (or <b>Install app</b>) → <b>Add</b>.</p>
+      <div class="irow">
+        <div class="plat">Android <small>Chrome</small></div>
+        <div class="seq"><span class="k">⋮ Menu</span><span class="arr">→</span><span class="k">Add to Home screen</span><span class="arr">→</span><span class="k">Add</span></div>
       </div>
-      <div class="hcard">
-        <b>Mac / PC</b>
-        <p>Bookmark it, or in Chrome/Edge click the <b>Install</b> icon in the address bar to run it in its own window.</p>
+      <div class="irow">
+        <div class="plat">Mac / PC <small>Chrome · Edge</small></div>
+        <div class="seq">Click the <span class="k">Install</span> icon in the address bar — or just bookmark it</div>
       </div>
     </div>
+    <p class="ihint">On iPhone, the <b>Share</b> button is the square with an arrow pointing up — in Safari it sits in the bottom toolbar; in Chrome, tap the <b>⋯</b> / share icon near the address bar first.</p>
   </section>
 
   <footer>
@@ -572,7 +592,15 @@ function parsePasted(){
   loadEvents(parseSchedule(txt));
 }
 $('#parseText').onclick=parsePasted;
-$('#pasteArea').addEventListener('paste',()=>setTimeout(parsePasted,60));
+let _ptimer;
+function maybeAutoParse(){
+  const v=$('#pasteArea').value;
+  const looks=/in the following please find your schedule/i.test(v) ||
+    (v.match(/\d{1,2}:\d{2}\s*[-\u2010-\u2015\u2212]\s*\d{1,2}:\d{2}/g)||[]).length>=2;
+  if(looks) parsePasted();
+}
+$('#pasteArea').addEventListener('paste',()=>setTimeout(maybeAutoParse,60));
+$('#pasteArea').addEventListener('input',()=>{ clearTimeout(_ptimer); _ptimer=setTimeout(maybeAutoParse,500); });
 $('#pasteClip').onclick=async()=>{
   try{
     const t=await navigator.clipboard.readText();
@@ -587,6 +615,7 @@ $('#incReserve').onchange=()=>{applyToggles();render();};
 $('#incOff').onchange=()=>{applyToggles();render();};
 $('#incAvail').onchange=()=>{applyToggles();render();};
 $('#tz').onchange=render;
+const _rf=$('#reloadFresh'); if(_rf) _rf.onclick=e=>{ e.preventDefault(); location.replace(location.pathname+'?v='+Date.now()); };
 
 async function exportICS(){
   if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected \u2014 tick at least one event above.","err"); return; }
