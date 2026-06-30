@@ -194,19 +194,28 @@
     text-decoration:none;background:#3D95CE;color:#fff;padding:11px 18px;border-radius:10px;
     transition:.14s;white-space:nowrap}
   .tip a.venmo:hover{background:#2f7fb3;transform:translateY(-1px)}
+  .tip .btns{flex:none;display:flex;flex-wrap:wrap;gap:10px}
+  .tip a.paypal{flex:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+    text-decoration:none;background:#003087;color:#fff;padding:11px 18px;border-radius:10px;
+    transition:.14s;white-space:nowrap}
+  .tip a.paypal:hover{background:#00256b;transform:translateY(-1px)}
+  .feedback{margin-top:16px;font-size:13px;color:var(--slate);line-height:1.65}
+  .feedback b{color:var(--ink);font-weight:600}
+  .feedback a{color:var(--teal-dk);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
+  .feedback a:hover{border-bottom-color:var(--teal-dk)}
 
   /* How it works */
   .how{margin-top:42px;padding-top:28px;border-top:1px solid var(--line)}
   .how h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
     letter-spacing:-.01em;margin:0 0 4px}
   .how .sub{color:var(--slate);font-size:14px;margin:0 0 18px}
-  .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px}
-  .hcard b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+  .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+  .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;flex-direction:column}
+  .hcard b{display:flex;align-items:flex-start;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
     color:var(--ink);margin-bottom:6px}
-  .hcard b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;
-    background:var(--teal);margin-right:8px;vertical-align:middle}
-  .hcard.priv b::before{background:var(--amber)}
+  .hcard b::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;
+    background:var(--teal);margin-top:6px}
+  .hcard.secure b::before{background:var(--amber)}
   .hcard p{margin:0;font-size:13px;color:var(--slate);line-height:1.55}
 
   @media (max-width:640px){
@@ -247,7 +256,7 @@
   <ol class="steps">
     <li><span class="n">1</span><div><b>Add the schedule.</b> In your mail app, save or print the “your schedule changed” email as a PDF, then drop it above. No PDF handy? Use <b>paste the text instead</b> and copy the email straight in.</div></li>
     <li><span class="n">2</span><div><b>Check the events.</b> Each brief‑to‑debrief is rolled into one event, named by its period with the sim as the location. Click any name or sim to edit it, and untick anything you don't want. The toggles up top control reserve and off/block days.</div></li>
-    <li><span class="n">3</span><div><b>Send it to your calendar.</b> Download the <code>.ics</code> for Apple Calendar or Outlook, or tap <code>G ↗</code> on any row to drop that event straight into Google.</div></li>
+    <li><span class="n">3</span><div><b>Send it to your calendar.</b> Tap <b>Add to Apple Calendar</b> (Mac/iPhone), <b>Download .ics</b> for Outlook, or <code>G ↗</code> on any row for Google.</div></li>
   </ol>
   <p class="help" style="margin-top:12px"><b>On an iPad or phone?</b> Open this page in Safari or Chrome (or just visit it online) — a file opened from the Files preview runs with the buttons switched off.</p>
 
@@ -274,17 +283,22 @@
     <div class="strips" id="strips"></div>
 
     <div class="export">
-      <button class="btn primary" id="dl">Download .ics</button>
+      <button class="btn primary" id="addApple">Add to Apple Calendar</button>
+      <button class="btn ghost" id="dl">Download .ics</button>
       <button class="btn ghost" id="clear">Start over</button>
     </div>
     <p class="help">
-      <b>Apple Calendar / Outlook:</b> open the downloaded <code>.ics</code> to import. &nbsp;
-      <b>Google:</b> use the <code>G</code> link on a row to add it one at a time, or import the <code>.ics</code> at Google Calendar → Settings → Import.
+      <b>Apple (Mac &amp; iPhone):</b> tap <b>Add to Apple Calendar</b> — Calendar opens and asks to add the events, nothing to download. &nbsp;
+      <b>Outlook:</b> tap <b>Download .ics</b> and open the file. &nbsp;
+      <b>Google:</b> use <code>G ↗</code> on a row, or import the <code>.ics</code> at Google Calendar → Settings → Import.
     </p>
 
     <div class="tip">
       <p><b>Did this just save you from transcribing an entire bid period into your calendar, one soul‑crushing event at a time?</b> The guy who built it — Jesse — accepts tips, compliments, and being left completely alone, in roughly equal measure. A tip won't help you avoid the zero‑dark‑thirty briefs or move you up the seniority list, but it will make a man you may have never met nod quietly in approval. The app works the same either way. You'll just feel a little smugger.</p>
-      <a class="venmo" href="https://venmo.com/u/Jesse-Orebaugh" target="_blank" rel="noopener">Tip Jesse on Venmo →</a>
+      <div class="btns">
+        <a class="venmo" href="https://venmo.com/u/Jesse-Orebaugh" target="_blank" rel="noopener">Venmo</a>
+        <a class="paypal" href="https://www.paypal.me/jesseorebaugh" target="_blank" rel="noopener">PayPal</a>
+      </div>
     </div>
   </section>
 
@@ -300,7 +314,7 @@
         <b>Does the boring part</b>
         <p>Brief, the event, and debrief get fused into one calendar block — start of brief to end of debrief — named by the period, with the sim as the location. The exact thing you were about to do 28 times by hand, minus the sighing.</p>
       </div>
-      <div class="hcard priv">
+      <div class="hcard secure">
         <b>Never phones home</b>
         <p>All of this runs inside this browser tab. No server, no account, no upload, no “we value your privacy” banner that legally means the opposite. Close the tab and it forgets you existed. Your roster's secrets die with it.</p>
       </div>
@@ -310,6 +324,7 @@
   <footer>
     <b>Not affiliated with, endorsed by, or connected to FedEx, Mint, or any employer</b> — just one instructor trying to make a fellow instructor's day slightly less annoying. Free, no accounts, no tracking, no catch.
     It's a convenience, not a system of record, so eyeball every event against the official schedule before you bet a show time on it.
+    <p class="feedback"><b>Found a bug, a brilliant idea, or just want to argue about the shade of orange?</b> <a href="mailto:JOREBAUGH@gmail.com?subject=Mint%20Schedule%20feedback&body=Tick%20whatever%20applies%20%28or%20ignore%20this%20and%20freestyle%29%3A%0A%0A%5B%20%5D%20It%20worked%20and%20I%20have%20warm%20feelings.%0A%5B%20%5D%20Something%20broke.%20Right%20before%20it%20broke%2C%20I%3A%0A%5B%20%5D%20Idea%20/%20feature%20I%27d%20love%3A%0A%5B%20%5D%20The%20orange%20is%20the%20wrong%20orange.%0A%5B%20%5D%20Just%20saying%20hi.%0A%0ADetails%20%28screenshots%20welcome%29%3A%0A">Send Jesse the feedback →</a> Problems, praise, and feature wishes all land in the same inbox, where they are read with great seriousness and zero promises.</p>
   </footer>
 </div>
 
@@ -625,6 +640,14 @@ $('#dl').onclick=()=>{
   const a=document.createElement('a');
   a.href=url; a.download="schedule.ics"; document.body.appendChild(a); a.click();
   a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+};
+$('#addApple').onclick=()=>{
+  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected to add.","err"); return; }
+  // open the calendar file so the OS hands it to Calendar (no 'download' = no trip to the Downloads folder)
+  const a=document.createElement('a');
+  a.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(buildICS());
+  a.target='_blank'; a.rel='noopener';
+  document.body.appendChild(a); a.click(); a.remove();
 };
 $('#clear').onclick=()=>{
   EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value='';
