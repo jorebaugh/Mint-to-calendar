@@ -230,9 +230,19 @@
   .trouble summary{cursor:pointer;font-weight:600;color:var(--ink);list-style:none;
     display:flex;align-items:center;gap:9px}
   .trouble summary::-webkit-details-marker{display:none}
-  .trouble summary::before{content:"▸";color:var(--slate);font-size:11px;transition:transform .15s}
+  .trouble summary::before{content:"";flex:none;width:0;height:0;
+    border-left:6px solid var(--slate);border-top:5px solid transparent;border-bottom:5px solid transparent;
+    transition:transform .15s}
   .trouble[open] summary::before{transform:rotate(90deg)}
   .trouble .tbody{margin-top:10px}
+  .updatebar{display:none;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--teal);color:#fff;border-radius:12px;padding:11px 15px;margin-top:14px;
+    font-size:13.5px;font-weight:500}
+  .updatebar.show{display:flex}
+  .updatebar b{font-weight:700}
+  .updatebar button{flex:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;
+    background:#fff;color:var(--teal-dk);border:none;border-radius:8px;padding:7px 14px;cursor:pointer}
+  .updatebar button:hover{background:#f0eafd}
   .trouble b{color:var(--ink);font-weight:600}
   .trouble a{color:var(--teal-dk);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
   .linkrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:9px}
@@ -265,6 +275,10 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="updatebar" id="updateBar">
+    <span><b>A newer version is available.</b></span>
+    <button id="updateBtn">Refresh now</button>
+  </div>
   <header>
     <p class="eyebrow">For sim instructors</p>
     <h1>Mint Schedule <span class="arrow">→</span> Calendar</h1>
@@ -272,12 +286,6 @@
     <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
   </header>
 
-  <details class="trouble">
-    <summary>Out of date, or not updating?</summary>
-    <div class="tbody">If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
-      <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
-    </div>
-  </details>
 
   <section class="how">
     <h2>How it works</h2>
@@ -297,6 +305,13 @@
       </div>
     </div>
   </section>
+
+  <details class="trouble">
+    <summary>Out of date, or not updating?</summary>
+    <div class="tbody">If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
+      <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
+    </div>
+  </details>
 
   <div class="inputzone">
     <textarea id="pasteArea" placeholder="Paste your whole schedule email here…"></textarea>
@@ -385,6 +400,7 @@
 
 <script>
 const $ = s => document.querySelector(s);
+const BUILD="2026.06.30-2";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -636,6 +652,17 @@ $('#incOff').onchange=()=>{applyToggles();render();};
 $('#incAvail').onchange=()=>{applyToggles();render();};
 $('#tz').onchange=render;
 const _rf=$('#reloadFresh'); if(_rf) _rf.onclick=e=>{ e.preventDefault(); location.replace(location.pathname+'?v='+Date.now()); };
+function _bust(){ return location.origin+location.pathname+'?v='+Date.now(); }
+async function checkUpdate(){
+  try{
+    const res=await fetch(location.pathname+'?cb='+Date.now(),{cache:'no-store'});
+    if(!res.ok) return;
+    const m=(await res.text()).match(/const BUILD="([^"]+)"/);
+    if(m && m[1] && m[1]!==BUILD) $('#updateBar').classList.add('show');
+  }catch(e){}
+}
+const _ub=$('#updateBtn'); if(_ub) _ub.onclick=()=>location.replace(_bust());
+checkUpdate();
 const _purl=location.origin+location.pathname;
 const _pu=$('#pageUrl'); if(_pu) _pu.textContent=_purl;
 const _cl=$('#copyLink');
