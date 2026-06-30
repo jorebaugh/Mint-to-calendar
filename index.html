@@ -14,7 +14,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   :root{
     --bg:#F4F6F7; --surface:#FFFFFF; --ink:#14202A; --slate:#52636F;
@@ -174,6 +173,10 @@
     font-size:12px;color:var(--slate);line-height:1.7}
   footer b{color:var(--slate);font-weight:600}
 
+  /* Paste input */
+  .inputzone{margin-top:6px}
+  .inputbtns{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+
   /* Steps */
   .steps{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:9px}
   .steps li{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--slate)}
@@ -205,10 +208,10 @@
   .feedback a:hover{border-bottom-color:var(--teal-dk)}
 
   /* How it works */
-  .how{margin-top:42px;padding-top:28px;border-top:1px solid var(--line)}
-  .how h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+  .how,.install{margin-top:42px;padding-top:28px;border-top:1px solid var(--line)}
+  .how h2,.install h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
     letter-spacing:-.01em;margin:0 0 4px}
-  .how .sub{color:var(--slate);font-size:14px;margin:0 0 18px}
+  .how .sub,.install .sub{color:var(--slate);font-size:14px;margin:0 0 18px}
   .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
   .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;flex-direction:column}
   .hcard b{display:flex;align-items:flex-start;gap:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
@@ -238,27 +241,19 @@
     <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
   </header>
 
-  <div class="drop" id="drop">
-    <div class="ic">[ PDF ]</div>
-    <div class="big">Drop your schedule PDF here</div>
-    <div class="sub">or tap to choose a file &nbsp;·&nbsp; <a href="#" id="pasteLink">paste the text instead</a></div>
-    <input type="file" id="file" accept="application/pdf,.pdf">
-  </div>
-
-  <div class="paste" id="pasteBox">
-    <textarea id="pasteArea" placeholder="Paste the whole schedule email here…"></textarea>
-    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn primary" id="pasteClip">Paste from clipboard</button>
-      <button class="btn ghost" id="parseText">Parse text</button>
+  <div class="inputzone">
+    <textarea id="pasteArea" placeholder="Paste your whole schedule email here…"></textarea>
+    <div class="inputbtns">
+      <button class="btn primary" id="parseText">Make my calendar →</button>
+      <button class="btn ghost" id="pasteClip">Paste from clipboard</button>
     </div>
   </div>
 
   <ol class="steps">
-    <li><span class="n">1</span><div><b>Add the schedule.</b> In your mail app, save or print the “your schedule changed” email as a PDF, then drop it above. No PDF handy? Use <b>paste the text instead</b> and copy the email straight in.</div></li>
-    <li><span class="n">2</span><div><b>Check the events.</b> Each brief‑to‑debrief is rolled into one event, named by its period with the sim as the location. Click any name or sim to edit it, and untick anything you don't want. The toggles up top control reserve and off/block days.</div></li>
-    <li><span class="n">3</span><div><b>Send it to your calendar.</b> Tap <b>Add to Apple Calendar</b> (Mac/iPhone), <b>Download .ics</b> for Outlook, or <code>G ↗</code> on any row for Google.</div></li>
+    <li><span class="n">1</span><div><b>Copy your schedule email.</b> Open the “your schedule changed” email, select all, and copy it — the whole thing, headers and all, is fine.</div></li>
+    <li><span class="n">2</span><div><b>Paste it above</b> and tap <b>Make my calendar</b>. Each brief‑to‑debrief becomes one event, named by its period with the sim as the location. Click any name or sim to fix it; the toggles up top control reserve, available, and off/block days.</div></li>
+    <li><span class="n">3</span><div><b>Send it to your calendar.</b> On <b>iPhone/iPad</b>, tap <b>Add to Apple Calendar</b> and pick Calendar in the share sheet. On a <b>Mac/PC</b> the <code>.ics</code> downloads — open it. Or tap <code>G ↗</code> on any row for Google.</div></li>
   </ol>
-  <p class="help" style="margin-top:12px"><b>On an iPad or phone?</b> Open this page in Safari or Chrome (or just visit it online) — a file opened from the Files preview runs with the buttons switched off.</p>
 
   <div class="note" id="note"></div>
 
@@ -277,6 +272,7 @@
       </div>
       <label class="tog"><input type="checkbox" id="incReserve" checked> Reserve (RSV / RB / RA)</label>
       <label class="tog"><input type="checkbox" id="incOff"> Off &amp; block days (XDAY / BLK)</label>
+      <label class="tog"><input type="checkbox" id="incAvail"> Available days (AVAIL)</label>
       <span class="count" id="count"></span>
     </div>
 
@@ -308,7 +304,7 @@
     <div class="hgrid">
       <div class="hcard">
         <b>Reads the email</b>
-        <p>You hand it the “your schedule changed” PDF. It finds the actual schedule and quietly ignores the opening paragraph where Mint lists, in loving detail, everything it just took away from you.</p>
+        <p>You paste the “your schedule changed” email — the whole thing, forwarded headers and all. It hunts down the actual schedule and quietly ignores the opening paragraph where Mint lists, in loving detail, everything it just took away from you.</p>
       </div>
       <div class="hcard">
         <b>Does the boring part</b>
@@ -321,6 +317,25 @@
     </div>
   </section>
 
+  <section class="install">
+    <h2>Put it on your home screen</h2>
+    <p class="sub">Add it once and it opens like a real app — full screen, its own icon, no URL to remember.</p>
+    <div class="hgrid">
+      <div class="hcard">
+        <b>iPhone / iPad</b>
+        <p>In Safari, tap the <b>Share</b> button (the square with an up arrow), then <b>Add to Home Screen</b> → <b>Add</b>. The orange‑and‑purple icon lands on your home screen.</p>
+      </div>
+      <div class="hcard">
+        <b>Android</b>
+        <p>In Chrome, tap the <b>⋮</b> menu, then <b>Add to Home screen</b> (or <b>Install app</b>) → <b>Add</b>.</p>
+      </div>
+      <div class="hcard">
+        <b>Mac / PC</b>
+        <p>Bookmark it, or in Chrome/Edge click the <b>Install</b> icon in the address bar to run it in its own window.</p>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <b>Not affiliated with, endorsed by, or connected to FedEx, Mint, or any employer</b> — just one instructor trying to make a fellow instructor's day slightly less annoying. Free, no accounts, no tracking, no catch.
     It's a convenience, not a system of record, so eyeball every event against the official schedule before you bet a show time on it.
@@ -329,144 +344,105 @@
 </div>
 
 <script>
-if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-}
-
 const $ = s => document.querySelector(s);
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 let EVENTS = [];
 
-/* ---------- PDF → lines ---------- */
-async function pdfToLines(buf){
-  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
-  const out = [];
-  for(let p=1;p<=pdf.numPages;p++){
-    const page = await pdf.getPage(p);
-    const tc = await page.getTextContent();
-    const items = tc.items.filter(i=>i.str && i.str.trim())
-      .map(i=>({x:i.transform[4], y:i.transform[5], s:i.str}));
-    items.sort((a,b)=> (b.y - a.y) || (a.x - b.x));
-    const lines=[]; let cur=null;
-    for(const it of items){
-      if(cur && Math.abs(cur.y - it.y) <= 3.2){ cur.parts.push(it); }
-      else { cur={y:it.y, parts:[it]}; lines.push(cur); }
-    }
-    for(const l of lines){
-      const s = l.parts.sort((a,b)=>a.x-b.x).map(p=>p.s).join(' ').replace(/\s+/g,' ').trim();
-      if(s) out.push(s);
-    }
-  }
-  return out;
-}
-
-/* ---------- lines → events ---------- */
-const DATE_RE = /(\d{2})\.(\d{2})\.(\d{4})/;
-const TIME_RE = /(\d{1,2}:\d{2})\s*[-\u2013\u2014]\s*(\d{1,2}:\d{2})/;
-const SIM_RE  = /B77[SC]\d+|B777FPT\d+/i;
-const ADMIN_RE= /\b(RB-S|RB|RA-S|RA|RSV|XDAY|BLKAM|BLKPM|BLK)\b/;
-const RESERVE = new Set(["RSV","RB","RB-S","RA","RA-S"]);
-
+/* ---------- paste text -> events ---------- */
+const SIM_RE=/B77[SC]\d+|B777FPT\d+/i;
+const ADMIN=[
+  {re:/\bAVAIL\b/i,cat:'avail'},
+  {re:/\bXDAY\b/i,cat:'offblk'},
+  {re:/\bBLKAM\b/i,cat:'offblk'},
+  {re:/\bBLKPM\b/i,cat:'offblk'},
+  {re:/\bBLK\b/i,cat:'offblk'},
+  {re:/\bRSV\b/i,cat:'reserve'},
+  {re:/\bRB-S\b/i,cat:'reserve'},
+  {re:/\bRB\b/i,cat:'reserve'},
+  {re:/\bRA-S\b/i,cat:'reserve'},
+  {re:/\bRA\b/i,cat:'reserve'},
+];
+function adminCat(t){ for(const a of ADMIN) if(a.re.test(t)) return a.cat; return null; }
+function pad(t){ let [h,m]=t.split(':'); h=h.padStart(2,'0'); if(h==='24'){h='23';m='59';} return h+':'+m; }
+function stamp(d,t){ const [h,m]=t.split(':'); return `${d.yyyy}${d.mm}${d.dd}T${h}${m}00`; }
 function sessionLabel(t){
-  let s = (t.split('/').pop()||t);
-  s = s.replace(/\(SUPPORT\)|\(INSTR\)|\(SUPP\)/ig,'');
-  s = s.replace(/\b(MEM|AOTC|MOD-D|B77[SC]\d+|B777FPT\d+)\b[\s\S]*$/i,'');
-  s = s.replace(/\b\d{5,}\b/g,'');
-  s = s.replace(/[;,]/g,' ').replace(/\s+/g,' ').trim();
+  let s=(t.split('/').pop()||t);
+  s=s.replace(/\(SUPPORT\)|\(INSTR\)|\(SUPP\)/ig,'');
+  s=s.replace(/\b(MEM|AOTC|MOD-D|B77[SC]\d+|B777FPT\d+)\b[\s\S]*$/i,'');
+  s=s.replace(/\b\d{5,}\b/g,'');
+  s=s.replace(/[;,*]/g,' ').replace(/\s+/g,' ').trim();
   return s;
 }
 function classify(text){
-  const role = /\(SUPPORT\)/i.test(text) ? 'support' : 'instr';
-  let kind;
-  if(/DBRF/i.test(text)) kind='dbrf';
-  else if(/\bBRF\b/i.test(text)) kind='brf';
-  else kind='main';
-  const sm = text.match(SIM_RE);
-  const am = text.match(ADMIN_RE);
-  return { role, kind, sim: sm?sm[0].toUpperCase():null, admin: am?am[1]:null };
+  const role=/\(SUPPORT\)/i.test(text)?'support':'instr';
+  const kind=/DBRF/i.test(text)?'dbrf':(/\bBRF\b/i.test(text)?'brf':'main');
+  const sm=text.match(SIM_RE);
+  return {role,kind,sim:sm?sm[0].toUpperCase():null,adminCat:adminCat(text)};
 }
-function parseSchedule(lines){
-  let i = lines.findIndex(l=>/in the following please find your schedule/i.test(l));
-  let body = i>=0 ? lines.slice(i+1) : lines.slice();
-  body = body.filter(l =>
-    l &&
-    !/^date\s+time\s+title\s+location$/i.test(l) &&
-    !/do not reply|best regards|scheduling team|caution!|originated outside|please find the changes|find the changes in the following/i.test(l) &&
-    !/^\s*\d{2}\.\d{2}\.\d{4}\s+(Removed|Added|Changed)/i.test(l) &&
-    !/^\s*(Removed|Added|Changed)\b/i.test(l)
+const DOT_DATE=/(\d{2})\.(\d{2})\.(\d{4})/;
+const TIME_RANGE=/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/;
+function normalize(s){
+  return String(s).replace(/\r/g,'\n').replace(/\u00a0/g,' ')
+    .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g,'-');
+}
+function parseSchedule(input){
+  let text=normalize(Array.isArray(input)?input.join('\n'):input);
+  const mk=text.match(/in the following please find your schedule[\s\S]*?:/i);
+  if(mk) text=text.slice(text.indexOf(mk[0])+mk[0].length);
+  text=text.replace(/(\d{2}\.\d{2}\.\d{4})/g,'\n$1 ')
+           .replace(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g,'\n$1 ');
+  let lines=text.split('\n').map(s=>s.replace(/\t/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
+  lines=lines.filter(l=>
+    !/^date\b/i.test(l) &&
+    !/(do not reply|best regards|scheduling team|caution|originated outside|find the changes|^dear |your schedule has changed|begin forwarded|^from:|^to:|^sent:|^subject:|webportal)/i.test(l) &&
+    !/\b(Added|Removed|Changed)\b/i.test(l)
   );
-
-  // build segments
   const segs=[]; let curDate=null, open=null;
-  const push=()=>{ if(open){ segs.push(open); open=null; } };
-  for(const raw of body){
-    const dm = raw.match(DATE_RE);
-    if(dm) curDate={mm:dm[1],dd:dm[2],yyyy:dm[3]};
-    const tm = raw.match(TIME_RE);
+  const push=()=>{ if(open){segs.push(open);open=null;} };
+  for(const line of lines){
+    const dm=line.match(DOT_DATE), tm=line.match(TIME_RANGE);
     if(tm){
       push();
-      const after = raw.slice(raw.indexOf(tm[0])+tm[0].length);
-      open={ date:curDate, start:pad(tm[1]), end:pad(tm[2]), text:after.trim() };
-    } else if(open){
-      open.text += ' ' + raw.trim();
-    }
+      if(dm) curDate={mm:dm[1],dd:dm[2],yyyy:dm[3]};
+      const after=line.slice(line.indexOf(tm[0])+tm[0].length);
+      open={date:curDate,start:pad(tm[1]),end:pad(tm[2]),text:after.trim()};
+    } else if(dm){ curDate={mm:dm[1],dd:dm[2],yyyy:dm[3]}; }
+    else if(open){ open.text+=' '+line; }
   }
   push();
-
-  // group
   const events=[]; let pend=null;
   const flush=()=>{ if(pend){ if(pend.name) events.push(pend); pend=null; } };
   for(const seg of segs){
     if(!seg.date) continue;
-    const c = classify(seg.text);
-    if(c.admin && c.kind==='main'){
+    const c=classify(seg.text);
+    if(c.adminCat && c.kind==='main' && !seg.text.includes('/')){
       flush();
-      events.push({
-        startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
-        name:c.admin, sim:'MEM', role:'instr',
-        category: RESERVE.has(c.admin)?'reserve':'offblk'
-      });
+      events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
+        name:sessionLabel(seg.text),sim:'MEM',role:c.role,category:c.adminCat});
       continue;
     }
-    if(c.kind==='brf'){
-      flush();
-      pend={ startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
-             name:null,sim:null,role:c.role,category:'training' };
-    } else if(c.kind==='main'){
-      if(pend && pend.name===null){
-        pend.name = sessionLabel(seg.text);
-        pend.sim  = c.sim || 'MEM';
-        pend.role = c.role;
-        pend.endDate = seg.date; pend.end = seg.end;
-      } else {
-        flush();
-        events.push({
-          startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
-          name:sessionLabel(seg.text), sim:c.sim||'MEM', role:c.role, category:'training'
-        });
-      }
-    } else if(c.kind==='dbrf'){
-      if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; }
-    }
+    if(c.kind==='brf'){ flush(); pend={startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:null,sim:null,role:c.role,category:'training'}; }
+    else if(c.kind==='main'){
+      if(pend && pend.name===null){ pend.name=sessionLabel(seg.text); pend.sim=c.sim||'MEM'; pend.role=c.role; pend.endDate=seg.date; pend.end=seg.end; }
+      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.text),sim:c.sim||'MEM',role:c.role,category:'training'}); }
+    } else if(c.kind==='dbrf'){ if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; } }
   }
   flush();
-
-  events.forEach(e=>{ e.include = e.category==='training'; });
-  events.sort((a,b)=> stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
+  events.forEach(e=>{ e.include=e.category==='training'; });
+  events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   return events;
 }
-function pad(t){ const [h,m]=t.split(':'); return h.padStart(2,'0')+':'+m; }
-function stamp(d,t){ const [h,m]=t.split(':'); return `${d.yyyy}${d.mm}${d.dd}T${h}${m}00`; }
 function wd(d){ return WD[new Date(+d.yyyy,+d.mm-1,+d.dd).getDay()]; }
 
 /* ---------- render ---------- */
 function applyToggles(){
-  const r=$('#incReserve').checked, o=$('#incOff').checked;
+  const r=$('#incReserve').checked, o=$('#incOff').checked, a=$('#incAvail').checked;
   EVENTS.forEach(e=>{
     if(e.category==='reserve') e.include=r;
     else if(e.category==='offblk') e.include=o;
+    else if(e.category==='avail') e.include=a;
   });
 }
 function render(){
@@ -503,7 +479,8 @@ function render(){
   const tr=sel.filter(e=>e.category==='training').length;
   const rs=sel.filter(e=>e.category==='reserve').length;
   const of=sel.filter(e=>e.category==='offblk').length;
-  $('#count').innerHTML=`<b>${sel.length}</b> selected &nbsp;·&nbsp; ${tr} training · ${rs} reserve · ${of} off`;
+  const av=sel.filter(e=>e.category==='avail').length;
+  $('#count').innerHTML=`<b>${sel.length}</b> selected &nbsp;·&nbsp; ${tr} training · ${rs} reserve · ${av} avail · ${of} off`;
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
@@ -581,7 +558,7 @@ function hideNote(){ $('#note').className='note'; }
 
 function loadEvents(events){
   if(!events.length){
-    showNote("Couldn't find any events. If this was a PDF, try the “paste the text instead” option.","err");
+    showNote("Hmm, I couldn't find any events. Make sure you copied the whole schedule email (the part with the dates and times), then paste and try again.","err");
     $('#panel').classList.remove('show'); return;
   }
   EVENTS=events; applyToggles(); render();
@@ -589,33 +566,10 @@ function loadEvents(events){
   $('#panel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-async function handleFile(file){
-  if(!file) return;
-  if(!window.pdfjsLib){ showNote("PDF reader didn't load (no connection?). Paste the text instead.","err"); return; }
-  showNote("Reading "+file.name+"…","info");
-  try{
-    const buf=await file.arrayBuffer();
-    const lines=await pdfToLines(buf);
-    loadEvents(parseSchedule(lines));
-  }catch(err){
-    console.error(err);
-    showNote("That file couldn't be read. Try pasting the schedule text instead.","err");
-  }
-}
-
-const drop=$('#drop'), fileInput=$('#file');
-drop.onclick=e=>{ if(e.target.id!=='pasteLink') fileInput.click(); };
-fileInput.onchange=e=>handleFile(e.target.files[0]);
-['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
-['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
-drop.addEventListener('drop',e=>{ if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
-
-$('#pasteLink').onclick=e=>{ e.preventDefault(); $('#pasteBox').classList.toggle('show'); $('#pasteArea').focus(); };
 function parsePasted(){
-  const txt=$('#pasteArea').value.trim();
-  if(!txt){ showNote("Paste the schedule text into the box first.","err"); return; }
-  const lines=txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  loadEvents(parseSchedule(lines));
+  const txt=$('#pasteArea').value;
+  if(!txt.trim()){ showNote("Paste your schedule email into the box first.","err"); return; }
+  loadEvents(parseSchedule(txt));
 }
 $('#parseText').onclick=parsePasted;
 $('#pasteArea').addEventListener('paste',()=>setTimeout(parsePasted,60));
@@ -623,14 +577,15 @@ $('#pasteClip').onclick=async()=>{
   try{
     const t=await navigator.clipboard.readText();
     if(t && t.trim()){ $('#pasteArea').value=t; parsePasted(); }
-    else showNote("Clipboard looks empty — paste into the box and tap Parse text.","info");
+    else showNote("Clipboard looks empty — long‑press the box and Paste, then tap Make my calendar.","info");
   }catch(e){
-    showNote("This browser won't let the page read your clipboard. Tap inside the box, paste, then tap Parse text.","info");
+    showNote("Your browser won't let the page read the clipboard. Long‑press the box, Paste, then tap Make my calendar.","info");
   }
 };
 
 $('#incReserve').onchange=()=>{applyToggles();render();};
 $('#incOff').onchange=()=>{applyToggles();render();};
+$('#incAvail').onchange=()=>{applyToggles();render();};
 $('#tz').onchange=render;
 
 async function exportICS(){
@@ -659,8 +614,7 @@ async function exportICS(){
 $('#addApple').onclick=exportICS;
 $('#dl').onclick=exportICS;
 $('#clear').onclick=()=>{
-  EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value='';
-  $('#pasteBox').classList.remove('show'); fileInput.value=''; hideNote();
+  EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value=''; hideNote();
   window.scrollTo({top:0,behavior:'smooth'});
 };
 </script>
