@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mint Schedule to Calendar · for sim instructors</title>
+<meta name="theme-color" content="#7C3AED">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mint Schedule">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAABmJLR0QA/wD/AP+gvaeTAAAMtklEQVR4nO3da4wb1RUH8L9nnN0Nu9mkCSx5EJIPBdKQQoIoEBKiACFFVBWqQOUbqIIICUFRaVQkilRVapW0IFWFCj6gSkWoakVBSoJS1KBSGtI24REgpTSPRnmRx2Yf3o33Ya9n5vSDM957Z+6MZ3ftufbec6SsPPaZe2fsn2L7Ht87mefWDgBE8MO/SZU/gQf8m/6mcLd0X6IcoQNVv6ocqU2S20ycE+yXqjcS94QkzJFPfvze2BxFm+LeyhyKfdLCKRE5FstgGVE5FstgGVE5VuBcWAbLqORY4rmwDJYh5JDFMqIaMVwGKm8rLINlBGRQGQfLYBlhGQAslsEylDIAsliGnCCdiMkyMP5Vtpwm32QZJsuAgINlSCfCMuDjYBnSibCMcoKitsIyWMbF4XOWwTKiEqTaCstgGWIj47UVlsEyAo1YLCO6kdic6S4DwvA51CfJMpQ5Bsgg4QMpy0icY4YMVMY5pNOSc1iGmTIQqK2wDJYh5ljCIywjNscwGRB+7MMyYnPMk0H+txWWEZtjpAwQWSyDZShlQBg+j26LZcg5hsiAP3we3RbLkHPMkQHAYhnqHONloDLOwTJYRkAGJaytsAwDZSBJbYVlmCkDVWsrLMNYGYivrbAMk2UgprbCMgyXgajaCstgGUSq2grLYBlEAEK1FZbBMsjfT6qtsAyWQcJ+lmonlqHOMUoGKrUVlsEyAjKAwFxZlhGRY6AMArLTSUbByR8f3D/k5NqsjsWdX+9s6UpBxkDx9LnhwyW32N5y6eJZK7JWazClOWUAyAbzxL6bSka+cP6T3p2uVwKQx/newvFlc9d1XfLV8Zw6yPgy/++T+c/KG/lSb6546tp5G1qt9mkgA4HaSvPKANF/+/9eluFneIf7/1F0hxHso2YyRpzcqaEDwqMoOsNHc/umhwyItZVmloERJz/s5CCHS6W+0ZN1kgEgVzgjv0IAMDjWXfKK6nMJtdLIMqBeh7TZZBDgeAWooujm6yQDgOONqfqkojs0DWSQYh3SJpQh58hR3+8m0b02vwxQYB3SaSZD+eTWTMYE+202GZB+zzHtZEj5UB18fWQo+m1CGYivrTSVjOqvFsuYkAzE1FaaS0bVl6s+MhKIbFoZALKNKeOSmcUlV5yZM2fYyqJaEICCM7xsaEb4sTmtubltB+V+K/0BofvHH1fLkCJXGLwwpuh0fvvpFrsfUKANbLslr7u79diXXYVSS6PJIFC2oWRks6Vv3f7+1zp3tuU+hecgebQC7RNIr03MrEUjs4Fl2QsdK/ceW7fr42+4lG0QGQAyP735ZGTf6cq4adUXdy/eal04AVOj0Lbk1Q83HTxzdXlTrwwA9u1X/EDdd7oyvrPxndtan8kUgqOcRkXWGbxx/u5i9rLjvUu0y4BYW9Eo4+51u68v/RyeCw5y7l360k1L94l3QYcMqOfKpivjysXdt7RtSfCFw5gg74FrX543s6e8AU0yoJgrm64MgO6/5bcYGwGHEJYz8uD6N/XKoOBc2dRlLFrQ29n7DjhCsSSz+yvt/RplgMTfc6QuA8CaVftAHgyLUWf2heICQiYuyXPvvPFzALpkAJVv1TpkAFjU8R+Y9JZScDu3H9l6OHc7gHltx++96ulFHQeikq9ZeBS4rXw7fRkQhs81yADQ5p6BSfGXYz8uywDQV1j6+qEXx9zIobSOzPnyDS0y4E9N0CMDIBvK38tM2zjYd5e4OTTWdTq/Mip5BorQJ4OC65ACacoQN4yJ4ElnMnEfuTTKgDRXFlC+qOG2WMakY/mlb4ubna1nF3V8FreDPhkIXFcWLKPOsXHp1uXz3i7/b3F5+6EHrnl8hq3+9Wso0paBwLyV1GUYh6TVHrrv6qfG3Jklmtme7U+8nwYZ8HGwjFSjxR5twWjidD0ykLy2UhcZ5vJIHtpkUMLaSp1ksI2qoVEGKEFtpZ4ymEfC0CADqFZbYRkNEHpkYHzeCsto0NAmAzG1FZbROKFFBvypCbpk0PDaLfPmm1VeSR795yz8flSXDCqPc+iSQUCpa6V1VRs4VFFy80R7dclAuLaSpgyOBKFNBgK1FR0yGEnCSFsGBBwso5FDgwxUxjn0yGAbiUKPDKjXIU1LBttIENpkkDA1ASyjAUOjDJDwmcPvKk0ZLCRhaJCBQG2FZTRk6JEBsbbCMhoytMlApbbCMhoydMqg8rwVXTL4U2nV0CgDQPWpCSxDZ+iTAVCVqQksQ3dokwHIX2VZRsNG+jIQs+xTKjJYSaLQIgOAempCSjLYRoLQJYPKnzl0yWAbVUOjDISnJrCM6pHWD5UotJWmDISGz1UNiTvXWEZTCvEO7HBe20Q9R1PsU4MMyMPnqobEnVlGOYi8z3aUnlvn/OFx6kthvWU9MiAMn6saEneuj4ymBQJ4jvfxn0q/XOO8sZkunKtbN9pkwB8+VzUk7lxHGU3MAwDckrf3tdKWW9xtz1K+px496JJBCFzGq9KQuDPLqBqlUXfPK6WtN7s7f4bRwRo2rFEGpMt4VRoSd2YZyaM47P7txbEtN7m7nkMhX5s29cmAsLIPmkKG++4LdOT9ye1bq6Ch2LePkQF31/Pev1617njSXv0gsq1T6AkaZUBc9qnxZQCg7kPekd2T3j21oHyPu/1Z772XrPWP2asfQrZlSq1V/vh3pCADsVMTVJ2Fm52SjGn3ziIHDZ5xtz9b+sVqb+9rE7vwlNhI5Y9/RzoyKHpqgqqzcLNTk2HIlEjKfem8sbn0/Hrvo9cnutC7RhmImJqg6izcLMuYSND5I84fn3B3/GSi+4m305QBkpeaZBn1i8yVq+wNT1nLN062gbRlQFxqUocMI4xk5l9j37XZuu7byMReQyMuNMiAeEkNllHzyHRdZd/xfeuG+2DZU2hGjwxc/J+jeWRkFq+yHM0rAdHAaTrxcXxOZu6V9sbN1g33T40FNMqg8rJPumRMAoi99hGsfWTi+9UyvE+3OScejXo0M3thTcY2AOiVASCrVcb0emdpn2uvf8xeuwkzareQlT4ZwmcOsbNwsywjPlo77Fu/Z9/5JNpm1aF1PTIQV1thGUmi5RJ7zcP2HU9g5uz6dKBNBiJrKyyjamRbrBsfsL/5dGbWZfXuSosMVMY59Mho0rGwbIu95mHrzicznZen0JsuGVT+zKFLRnPSgLXiHqy4J52+NMpAsLbCMhoutMmAtOyTHhmMJGGkLQPj81ZYRkOHBhm4+BtSltHQoUcGhKkJqrxw1zWVwToShDYZhMBcWTEv3DXLSD00yoA0V1bMC3ddFxn8pSUuiKj6i1o3GQjMW0lZBoChXAkcEZHPlX+coEcGxEtqpC8DQO+pIjgiYqCnoFEGKji0yADw+XvJL9ltXBz+sBf6ZJB/0WE9Mojo0N6BgW6+xpsiyKNP3zunUQbCl/FKUwYA16GdvzkJjlDs2XYy11MAoEsGSL6MV8oyyvHBW92H9g6AQ4jCsPPmr78AoFEGEFtbSUEGQOThdz863H+GP5leDPLo5c0f9p0d1SsDMbWVdGSU/w0NlH710IGzR0dgfDhj3ivP7N//17PaZQBk37rgUb0yyrcLw+5Hf+6ZNXfGomUdk5/70+Rx+n8XXnhi3yfvNoQMAjKbV+7XLkPMWXrdrNu+u+D6DZe2tU9xxkfThOt4Bz/o/eeOU3u2n/RcahAZADI/XLk/pu+UZVRu2jMycxe2ze5qtW1xt6hGpOON2CDF4xE5gbblPaKe3GBO/Ita3iCXBvuKfaeHCyOO+kXVJwPSXNmGkQHAKdH5E6PnT4yoEtSNkHRegQ1RRlyO+M+/V9WvkKN40gIPJshpQBkQayuNI2MSjbCMmsuAMHweOgGWYbYM+MPnoRNgGcbLIPU6pCyDZQBQrEPKMliGnyPVVlgGyxBzxmsrLINlBHL8dUhZBsuQc+jiOqQsg2XIOeVbFstgGUoZCFxXVnGSLEM+TnNkIDBvhWWwDPFEomsrLEM+TtNkILK2wjLk4zRQBqlrKyxDPk4zZUBRW2EZ8nEaKwPB2grLkI/TZBmQaissQz5Ow2VgfJyDZcjHyTLgX5GaZajaNFsGgSyWwTKUMhC+xhvLYBnq2grLYBnq2grLYBnq2grLYBnq2grLYBnq2grLYBmRtZXg8bGMajmGyAAF1iFlGdVyzJEBaR1SllEtxygZGP+xD8uolmOaDLr4bYVlVMsxUAZAFstgGUoZQGAdUpbBMoT2k9dWWIbfrxkykLi2wjL8fo2RgWS1FZbh92uSDEpQW2EZfr+GyUC12grL8Ps1TwZiayssw+/XSBmIrq2wDL9fU2UgorbCMvx+DZYBVW2FZfj9mi2DQrUVluH3a7wMgP4PbgMN5JkcvhsAAAAASUVORK5CYII=">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAADBklEQVRYhcWWS0hUURjH/+d4KfEBNpltskWa2EslNymWiK3MjKg2QUGBSJuCFtGukKCFu6xVBEVELzTIioiCWoiBRi/IyRRKStRRaXyNOne+f4s7o6WeOzNZ43cX59x7D/f3Pf7nO1fhN2so7c+agT4Jyh5CNpJMJQQkMTcSpBjG39f9MfoF7ITwlgSGrzZ2V01HmCoyuVgyeIiK10hJN3/sr+Dz13sJtf/yx1LvrANh+F1S1H+GgyAAGdY2Sy51ln9RDaX9WUGo7gREHobPzj9kZbLYcmoeSjQcpBQMDPKIRbGroZBoeGQ8qqGQs0xwULFIk0yLHS7oG/dCEFwAD4mNgcnu2OFOIBk6nsgDwXF8HnkF/9TggsjHgkPo+dmGqdBErHAQAisafO/u51jv8QIACEEgOIqVVjOSlBV+5pjQxrQ9gWTr/mx76erLRdOLYtcSWm7wyrLX2B6sBwYQl5Eak6EMlFlNGCs9h6et+Ub9aLe0Z6/5Gh85bIOBPDz/egYAkJf9w1W82q3mc406Plub4sW+3LPOjaIRHtaAWSQjqbuQU7Hh77wIm69tteu2tdwUOrpyM/SOiiU54H/TA+KLsWdoN4XOaXwpZkq/w9QmOCHx4cU24GGEz8vAQi/jyYB9/RhCjy8AU2NRMvBnyS03hTpOhAF3T0Ha77h78ekZpP02kmrqobcfcPBRGp0VCxwAdH4lVNoaI1veNoMzk9DlJ6C3VS2SgcW3u2WCR65ZBwprgMIaowMquwg6rxxITp9XABjhLhlwFsSjAV1QbXhjhoc7oVmhvt5AzA6YzPd9wgiPehp2PPFh3aYUbN3lgUpSCzLiyGSxLBEixKc2H1of9rqehup0UQfj/pOJsnPcar7YaehfLjjJUU3y3TLBQbBHE7y5THAQ0qJXeSZvkPIx4XCK354JNerzLyts0XIQkOEEwgnweEtf3ZAGgCvvd3YBoTKCnYmIHODBB99qm4F5P12HttxbkQlPLUUOi8Jmkhn/BC4Yp5IuQh7ZM6HGlr66oQjzF3nekmTfUoCgAAAAAElFTkSuQmCC" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root{
+    --bg:#F4F6F7; --surface:#FFFFFF; --ink:#14202A; --slate:#52636F;
+    --line:#DCE4E9; --line-soft:#EAEFF2;
+    --teal:#7C3AED; --teal-dk:#5B21B6; --teal-soft:#EDE7FC;
+    --amber:#E2670F; --amber-soft:#FCEBDA;
+    --reserve:#7C8A95; --reserve-soft:#EEF1F3;
+    --off:#B4BDC4;
+    --shadow:0 1px 2px rgba(20,32,42,.06), 0 8px 24px rgba(20,32,42,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+    padding:0 0 64px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header{padding:40px 0 22px}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--teal);font-weight:600;margin:0 0 10px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--teal);display:inline-block}
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(30px,6vw,46px);
+    line-height:1.02;letter-spacing:-.02em;margin:0 0 12px;
+  }
+  h1 .arrow{color:var(--amber)}
+  .lede{color:var(--slate);font-size:16px;max-width:60ch;margin:0}
+  .priv{
+    margin-top:14px;display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--slate);background:var(--surface);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+  }
+  .priv b{color:var(--ink);font-weight:600}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+
+  /* Drop zone */
+  .drop{
+    position:relative;background:var(--surface);border:1.5px dashed var(--line);
+    border-radius:16px;padding:34px 24px;text-align:center;cursor:pointer;
+    transition:border-color .15s, background .15s, transform .15s;
+    overflow:hidden;
+  }
+  .drop::after{ /* runway centerline */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:6px;
+    background:repeating-linear-gradient(90deg,var(--line) 0 22px,transparent 22px 44px);
+    opacity:.7;
+  }
+  .drop:hover,.drop.over{border-color:var(--teal);background:#FBFDFD}
+  .drop.over{transform:translateY(-1px)}
+  .drop .ic{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--teal);
+    letter-spacing:.1em;font-weight:600;margin-bottom:8px}
+  .drop .big{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;margin-bottom:4px}
+  .drop .sub{color:var(--slate);font-size:13.5px}
+  .drop .sub a{color:var(--teal);font-weight:600;text-decoration:none;border-bottom:1px solid var(--teal-soft)}
+  input[type=file]{display:none}
+
+  .paste{margin-top:14px;display:none}
+  .paste.show{display:block}
+  textarea{
+    width:100%;min-height:150px;resize:vertical;border:1px solid var(--line);
+    border-radius:12px;padding:13px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--ink);background:var(--surface);
+  }
+  textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+
+  /* status / errors */
+  .note{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:13.5px;display:none}
+  .note.show{display:block}
+  .note.err{background:var(--amber-soft);border:1px solid #EBCBA0;color:#7A4A12}
+  .note.info{background:var(--teal-soft);border:1px solid #BFE0E2;color:var(--teal-dk)}
+
+  /* Controls */
+  .panel{margin-top:26px;display:none}
+  .panel.show{display:block;animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .bar{
+    display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:12px 16px;margin-bottom:16px;
+  }
+  .bar .grp{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--slate)}
+  .bar label.tog{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  .bar select{
+    font-family:'Inter';font-size:13.5px;border:1px solid var(--line);border-radius:8px;
+    padding:6px 9px;color:var(--ink);background:var(--surface);cursor:pointer;
+  }
+  .bar select:focus{outline:none;border-color:var(--teal)}
+  input[type=checkbox]{accent-color:var(--teal);width:16px;height:16px;cursor:pointer}
+  .count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--slate)}
+  .count b{color:var(--teal-dk)}
+
+  /* Strips */
+  .strips{display:flex;flex-direction:column;gap:7px}
+  .strip{
+    display:grid;grid-template-columns:auto 132px 1fr auto;align-items:center;gap:12px;
+    background:var(--surface);border:1px solid var(--line);border-radius:11px;
+    padding:9px 13px 9px 0;position:relative;transition:opacity .15s,border-color .15s;
+  }
+  .strip::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    border-radius:11px 0 0 11px;background:var(--teal)}
+  .strip[data-cat=reserve]::before{background:var(--reserve)}
+  .strip[data-cat=offblk]::before{background:var(--off)}
+  .strip.off{opacity:.4}
+  .strip .chk{padding-left:14px}
+  .strip .time{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--slate);line-height:1.3}
+  .strip .time .d{color:var(--ink);font-weight:600}
+  .strip .main{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+  .strip input.name{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--ink);
+    border:1px solid transparent;border-radius:7px;padding:3px 7px;min-width:64px;width:auto;
+    background:transparent;
+  }
+  .strip input.name:hover{border-color:var(--line)}
+  .strip input.name:focus{outline:none;border-color:var(--teal);background:#FBFDFD}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;
+    padding:2px 7px;border-radius:6px;text-transform:uppercase;white-space:nowrap}
+  .tag.sup{background:var(--amber-soft);color:var(--amber)}
+  .strip input.sim{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--teal-dk);
+    background:var(--teal-soft);border:1px solid transparent;border-radius:6px;padding:3px 8px;
+    width:88px;text-align:center;
+  }
+  .strip input.sim:hover{border-color:#BFE0E2}
+  .strip input.sim:focus{outline:none;border-color:var(--teal)}
+  .strip .g{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--slate);
+    text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:4px 7px;
+    white-space:nowrap;transition:.12s;
+  }
+  .strip .g:hover{color:var(--teal-dk);border-color:var(--teal)}
+
+  /* Export */
+  .export{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:20px}
+  .btn{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    border:none;border-radius:11px;padding:13px 22px;cursor:pointer;transition:.14s;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn.primary{background:var(--teal);color:#fff;box-shadow:var(--shadow)}
+  .btn.primary:hover{background:var(--teal-dk);transform:translateY(-1px)}
+  .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--teal);color:var(--teal-dk)}
+  .help{font-size:12.5px;color:var(--slate);margin-top:12px;line-height:1.7}
+  .help b{color:var(--ink);font-weight:600}
+  .help code{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--line-soft);
+    padding:1px 6px;border-radius:5px}
+
+  footer{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--slate);line-height:1.7}
+  footer b{color:var(--slate);font-weight:600}
+
+  /* Steps */
+  .steps{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:9px}
+  .steps li{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--slate)}
+  .steps li b{color:var(--ink);font-weight:600}
+  .steps .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--teal-soft);
+    color:var(--teal-dk);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    display:grid;place-items:center;margin-top:1px}
+  .steps code,.help code{font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    background:var(--line-soft);padding:1px 6px;border-radius:5px}
+
+  /* Tip jar */
+  .tip{margin-top:22px;background:linear-gradient(180deg,#FBFDFD,var(--surface));
+    border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;
+    flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between}
+  .tip p{margin:0;font-size:13.5px;color:var(--slate);max-width:56ch}
+  .tip p b{color:var(--ink);font-weight:600}
+  .tip a.venmo{flex:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+    text-decoration:none;background:#3D95CE;color:#fff;padding:11px 18px;border-radius:10px;
+    transition:.14s;white-space:nowrap}
+  .tip a.venmo:hover{background:#2f7fb3;transform:translateY(-1px)}
+
+  /* How it works */
+  .how{margin-top:42px;padding-top:28px;border-top:1px solid var(--line)}
+  .how h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+    letter-spacing:-.01em;margin:0 0 4px}
+  .how .sub{color:var(--slate);font-size:14px;margin:0 0 18px}
+  .hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .hcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px}
+  .hcard b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    color:var(--ink);margin-bottom:6px}
+  .hcard b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;
+    background:var(--teal);margin-right:8px;vertical-align:middle}
+  .hcard.priv b::before{background:var(--amber)}
+  .hcard p{margin:0;font-size:13px;color:var(--slate);line-height:1.55}
+
+  @media (max-width:640px){
+    .hgrid{grid-template-columns:1fr}
+    .strip{grid-template-columns:auto 1fr;row-gap:8px;padding-bottom:11px}
+    .strip .time{grid-column:2}
+    .strip .main{grid-column:1 / -1;padding-left:14px}
+    .strip .g{grid-column:1 / -1;justify-self:start;margin-left:14px}
+    .count{width:100%;margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">For sim instructors</p>
+    <h1>Mint Schedule <span class="arrow">→</span> Calendar</h1>
+    <p class="lede">Feed it the schedule email Mint sends you — the one you'd otherwise retype into your calendar by hand, event by event, like some kind of pioneer. It hands back a tidy calendar file for Apple, Google, or Outlook, every brief‑through‑debrief rolled into one event, named by its period, with the sim as the location.</p>
+    <span class="priv"><span class="dot"></span>&nbsp;<b>Runs entirely in your browser.</b>&nbsp;Your schedule never leaves this device.</span>
+  </header>
+
+  <div class="drop" id="drop">
+    <div class="ic">[ PDF ]</div>
+    <div class="big">Drop your schedule PDF here</div>
+    <div class="sub">or tap to choose a file &nbsp;·&nbsp; <a href="#" id="pasteLink">paste the text instead</a></div>
+    <input type="file" id="file" accept="application/pdf,.pdf">
+  </div>
+
+  <div class="paste" id="pasteBox">
+    <textarea id="pasteArea" placeholder="Paste the whole schedule email here…"></textarea>
+    <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" id="pasteClip">Paste from clipboard</button>
+      <button class="btn ghost" id="parseText">Parse text</button>
+    </div>
+  </div>
+
+  <ol class="steps">
+    <li><span class="n">1</span><div><b>Add the schedule.</b> In your mail app, save or print the “your schedule changed” email as a PDF, then drop it above. No PDF handy? Use <b>paste the text instead</b> and copy the email straight in.</div></li>
+    <li><span class="n">2</span><div><b>Check the events.</b> Each brief‑to‑debrief is rolled into one event, named by its period with the sim as the location. Click any name or sim to edit it, and untick anything you don't want. The toggles up top control reserve and off/block days.</div></li>
+    <li><span class="n">3</span><div><b>Send it to your calendar.</b> Download the <code>.ics</code> for Apple Calendar or Outlook, or tap <code>G ↗</code> on any row to drop that event straight into Google.</div></li>
+  </ol>
+  <p class="help" style="margin-top:12px"><b>On an iPad or phone?</b> Open this page in Safari or Chrome (or just visit it online) — a file opened from the Files preview runs with the buttons switched off.</p>
+
+  <div class="note" id="note"></div>
+
+  <section class="panel" id="panel">
+    <div class="bar">
+      <div class="grp">
+        <span>Times in</span>
+        <select id="tz">
+          <option value="America/Chicago">Central (MEM)</option>
+          <option value="America/New_York">Eastern</option>
+          <option value="America/Denver">Mountain</option>
+          <option value="America/Los_Angeles">Pacific</option>
+          <option value="America/Anchorage">Alaska</option>
+          <option value="Pacific/Honolulu">Hawaii</option>
+        </select>
+      </div>
+      <label class="tog"><input type="checkbox" id="incReserve" checked> Reserve (RSV / RB / RA)</label>
+      <label class="tog"><input type="checkbox" id="incOff"> Off &amp; block days (XDAY / BLK)</label>
+      <span class="count" id="count"></span>
+    </div>
+
+    <div class="strips" id="strips"></div>
+
+    <div class="export">
+      <button class="btn primary" id="dl">Download .ics</button>
+      <button class="btn ghost" id="clear">Start over</button>
+    </div>
+    <p class="help">
+      <b>Apple Calendar / Outlook:</b> open the downloaded <code>.ics</code> to import. &nbsp;
+      <b>Google:</b> use the <code>G</code> link on a row to add it one at a time, or import the <code>.ics</code> at Google Calendar → Settings → Import.
+    </p>
+
+    <div class="tip">
+      <p><b>Did this just save you from transcribing an entire bid period into your calendar, one soul‑crushing event at a time?</b> The guy who built it — Jesse — accepts tips, compliments, and being left completely alone, in roughly equal measure. A tip won't help you avoid the zero‑dark‑thirty briefs or move you up the seniority list, but it will make a man you may have never met nod quietly in approval. The app works the same either way. You'll just feel a little smugger.</p>
+      <a class="venmo" href="https://venmo.com/u/Jesse-Orebaugh" target="_blank" rel="noopener">Tip Jesse on Venmo →</a>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <p class="sub">Three things happen, none of which involve you typing.</p>
+    <div class="hgrid">
+      <div class="hcard">
+        <b>Reads the email</b>
+        <p>You hand it the “your schedule changed” PDF. It finds the actual schedule and quietly ignores the opening paragraph where Mint lists, in loving detail, everything it just took away from you.</p>
+      </div>
+      <div class="hcard">
+        <b>Does the boring part</b>
+        <p>Brief, the event, and debrief get fused into one calendar block — start of brief to end of debrief — named by the period, with the sim as the location. The exact thing you were about to do 28 times by hand, minus the sighing.</p>
+      </div>
+      <div class="hcard priv">
+        <b>Never phones home</b>
+        <p>All of this runs inside this browser tab. No server, no account, no upload, no “we value your privacy” banner that legally means the opposite. Close the tab and it forgets you existed. Your roster's secrets die with it.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Not affiliated with, endorsed by, or connected to FedEx, Mint, or any employer</b> — just one instructor trying to make a fellow instructor's day slightly less annoying. Free, no accounts, no tracking, no catch.
+    It's a convenience, not a system of record, so eyeball every event against the official schedule before you bet a show time on it.
+  </footer>
+</div>
+
+<script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+const $ = s => document.querySelector(s);
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+let EVENTS = [];
+
+/* ---------- PDF → lines ---------- */
+async function pdfToLines(buf){
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const out = [];
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const tc = await page.getTextContent();
+    const items = tc.items.filter(i=>i.str && i.str.trim())
+      .map(i=>({x:i.transform[4], y:i.transform[5], s:i.str}));
+    items.sort((a,b)=> (b.y - a.y) || (a.x - b.x));
+    const lines=[]; let cur=null;
+    for(const it of items){
+      if(cur && Math.abs(cur.y - it.y) <= 3.2){ cur.parts.push(it); }
+      else { cur={y:it.y, parts:[it]}; lines.push(cur); }
+    }
+    for(const l of lines){
+      const s = l.parts.sort((a,b)=>a.x-b.x).map(p=>p.s).join(' ').replace(/\s+/g,' ').trim();
+      if(s) out.push(s);
+    }
+  }
+  return out;
+}
+
+/* ---------- lines → events ---------- */
+const DATE_RE = /(\d{2})\.(\d{2})\.(\d{4})/;
+const TIME_RE = /(\d{1,2}:\d{2})\s*[-\u2013\u2014]\s*(\d{1,2}:\d{2})/;
+const SIM_RE  = /B77[SC]\d+|B777FPT\d+/i;
+const ADMIN_RE= /\b(RB-S|RB|RA-S|RA|RSV|XDAY|BLKAM|BLKPM|BLK)\b/;
+const RESERVE = new Set(["RSV","RB","RB-S","RA","RA-S"]);
+
+function sessionLabel(t){
+  let s = (t.split('/').pop()||t);
+  s = s.replace(/\(SUPPORT\)|\(INSTR\)|\(SUPP\)/ig,'');
+  s = s.replace(/\b(MEM|AOTC|MOD-D|B77[SC]\d+|B777FPT\d+)\b[\s\S]*$/i,'');
+  s = s.replace(/\b\d{5,}\b/g,'');
+  s = s.replace(/[;,]/g,' ').replace(/\s+/g,' ').trim();
+  return s;
+}
+function classify(text){
+  const role = /\(SUPPORT\)/i.test(text) ? 'support' : 'instr';
+  let kind;
+  if(/DBRF/i.test(text)) kind='dbrf';
+  else if(/\bBRF\b/i.test(text)) kind='brf';
+  else kind='main';
+  const sm = text.match(SIM_RE);
+  const am = text.match(ADMIN_RE);
+  return { role, kind, sim: sm?sm[0].toUpperCase():null, admin: am?am[1]:null };
+}
+function parseSchedule(lines){
+  let i = lines.findIndex(l=>/in the following please find your schedule/i.test(l));
+  let body = i>=0 ? lines.slice(i+1) : lines.slice();
+  body = body.filter(l =>
+    l &&
+    !/^date\s+time\s+title\s+location$/i.test(l) &&
+    !/do not reply|best regards|scheduling team|caution!|originated outside|please find the changes|find the changes in the following/i.test(l) &&
+    !/^\s*\d{2}\.\d{2}\.\d{4}\s+(Removed|Added|Changed)/i.test(l) &&
+    !/^\s*(Removed|Added|Changed)\b/i.test(l)
+  );
+
+  // build segments
+  const segs=[]; let curDate=null, open=null;
+  const push=()=>{ if(open){ segs.push(open); open=null; } };
+  for(const raw of body){
+    const dm = raw.match(DATE_RE);
+    if(dm) curDate={mm:dm[1],dd:dm[2],yyyy:dm[3]};
+    const tm = raw.match(TIME_RE);
+    if(tm){
+      push();
+      const after = raw.slice(raw.indexOf(tm[0])+tm[0].length);
+      open={ date:curDate, start:pad(tm[1]), end:pad(tm[2]), text:after.trim() };
+    } else if(open){
+      open.text += ' ' + raw.trim();
+    }
+  }
+  push();
+
+  // group
+  const events=[]; let pend=null;
+  const flush=()=>{ if(pend){ if(pend.name) events.push(pend); pend=null; } };
+  for(const seg of segs){
+    if(!seg.date) continue;
+    const c = classify(seg.text);
+    if(c.admin && c.kind==='main'){
+      flush();
+      events.push({
+        startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
+        name:c.admin, sim:'MEM', role:'instr',
+        category: RESERVE.has(c.admin)?'reserve':'offblk'
+      });
+      continue;
+    }
+    if(c.kind==='brf'){
+      flush();
+      pend={ startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
+             name:null,sim:null,role:c.role,category:'training' };
+    } else if(c.kind==='main'){
+      if(pend && pend.name===null){
+        pend.name = sessionLabel(seg.text);
+        pend.sim  = c.sim || 'MEM';
+        pend.role = c.role;
+        pend.endDate = seg.date; pend.end = seg.end;
+      } else {
+        flush();
+        events.push({
+          startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,
+          name:sessionLabel(seg.text), sim:c.sim||'MEM', role:c.role, category:'training'
+        });
+      }
+    } else if(c.kind==='dbrf'){
+      if(pend){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); pend=null; }
+    }
+  }
+  flush();
+
+  events.forEach(e=>{ e.include = e.category==='training'; });
+  events.sort((a,b)=> stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
+  return events;
+}
+function pad(t){ const [h,m]=t.split(':'); return h.padStart(2,'0')+':'+m; }
+function stamp(d,t){ const [h,m]=t.split(':'); return `${d.yyyy}${d.mm}${d.dd}T${h}${m}00`; }
+function wd(d){ return WD[new Date(+d.yyyy,+d.mm-1,+d.dd).getDay()]; }
+
+/* ---------- render ---------- */
+function applyToggles(){
+  const r=$('#incReserve').checked, o=$('#incOff').checked;
+  EVENTS.forEach(e=>{
+    if(e.category==='reserve') e.include=r;
+    else if(e.category==='offblk') e.include=o;
+  });
+}
+function render(){
+  const box=$('#strips'); box.innerHTML='';
+  EVENTS.forEach((e,idx)=>{
+    const same = e.startDate.dd===e.endDate.dd && e.startDate.mm===e.endDate.mm;
+    const timeHtml = same
+      ? `<span class="d">${wd(e.startDate)} ${MONTHS[+e.startDate.mm-1]} ${+e.startDate.dd}</span><br>${e.start}–${e.end}`
+      : `<span class="d">${MONTHS[+e.startDate.mm-1]} ${+e.startDate.dd}</span> ${e.start}<br>→ <span class="d">${MONTHS[+e.endDate.mm-1]} ${+e.endDate.dd}</span> ${e.end}`;
+    const row=document.createElement('div');
+    row.className='strip'+(e.include?'':' off');
+    row.dataset.cat=e.category;
+    row.innerHTML=`
+      <div class="chk"><input type="checkbox" ${e.include?'checked':''} data-i="${idx}" class="inc"></div>
+      <div class="time">${timeHtml}</div>
+      <div class="main">
+        <input class="name" data-i="${idx}" value="${esc(e.name)}" spellcheck="false" size="${Math.max(4,e.name.length)}">
+        ${e.role==='support'?'<span class="tag sup">Support</span>':''}
+        <input class="sim" data-i="${idx}" value="${esc(e.sim)}" spellcheck="false">
+      </div>
+      <a class="g" href="${gLink(e)}" target="_blank" rel="noopener" title="Add this one to Google Calendar">G ↗</a>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('.inc').forEach(c=>c.onchange=ev=>{
+    EVENTS[+ev.target.dataset.i].include=ev.target.checked; render();
+  });
+  box.querySelectorAll('.name').forEach(n=>n.oninput=ev=>{
+    EVENTS[+ev.target.dataset.i].name=ev.target.value; ev.target.size=Math.max(4,ev.target.value.length);
+  });
+  box.querySelectorAll('.sim').forEach(n=>n.oninput=ev=>{
+    EVENTS[+ev.target.dataset.i].sim=ev.target.value;
+  });
+  const sel=EVENTS.filter(e=>e.include);
+  const tr=sel.filter(e=>e.category==='training').length;
+  const rs=sel.filter(e=>e.category==='reserve').length;
+  const of=sel.filter(e=>e.category==='offblk').length;
+  $('#count').innerHTML=`<b>${sel.length}</b> selected &nbsp;·&nbsp; ${tr} training · ${rs} reserve · ${of} off`;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+/* ---------- export ---------- */
+function summary(e){ return e.name + (e.role==='support' ? ' (Support)' : ''); }
+function icsEsc(s){ return String(s).replace(/[\\;,]/g,m=>'\\'+m).replace(/\n/g,'\\n'); }
+
+const VTZ = {
+  "America/Chicago": tz("America/Chicago","CST","CDT","-0600","-0500"),
+  "America/New_York": tz("America/New_York","EST","EDT","-0500","-0400"),
+  "America/Denver": tz("America/Denver","MST","MDT","-0700","-0600"),
+  "America/Los_Angeles": tz("America/Los_Angeles","PST","PDT","-0800","-0700"),
+  "America/Anchorage": tz("America/Anchorage","AKST","AKDT","-0900","-0800"),
+  "Pacific/Honolulu":
+`BEGIN:VTIMEZONE
+TZID:Pacific/Honolulu
+BEGIN:STANDARD
+TZOFFSETFROM:-1000
+TZOFFSETTO:-1000
+TZNAME:HST
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE`
+};
+function tz(id,std,dst,from,to){
+  return `BEGIN:VTIMEZONE
+TZID:${id}
+BEGIN:DAYLIGHT
+TZOFFSETFROM:${from}
+TZOFFSETTO:${to}
+TZNAME:${dst}
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:${to}
+TZOFFSETTO:${from}
+TZNAME:${std}
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE`;
+}
+function buildICS(){
+  const zone=$('#tz').value;
+  const now=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Schedule to Calendar//Instructor Tool//EN",
+           "CALSCALE:GREGORIAN","METHOD:PUBLISH", VTZ[zone]];
+  EVENTS.filter(e=>e.include).forEach((e,i)=>{
+    L.push("BEGIN:VEVENT",
+      `UID:sched-${stamp(e.startDate,e.start)}-${i}@instructor-tool`,
+      `DTSTAMP:${now}`,
+      `DTSTART;TZID=${zone}:${stamp(e.startDate,e.start)}`,
+      `DTEND;TZID=${zone}:${stamp(e.endDate,e.end)}`,
+      `SUMMARY:${icsEsc(summary(e))}`,
+      `LOCATION:${icsEsc(e.sim)}`,
+      "END:VEVENT");
+  });
+  L.push("END:VCALENDAR");
+  return L.join("\r\n");
+}
+function gLink(e){
+  const zone=$('#tz')?$('#tz').value:"America/Chicago";
+  const p=new URLSearchParams({
+    action:"TEMPLATE", text:summary(e),
+    dates:`${stamp(e.startDate,e.start)}/${stamp(e.endDate,e.end)}`,
+    ctz:zone, location:e.sim
+  });
+  return "https://calendar.google.com/calendar/render?"+p.toString();
+}
+
+/* ---------- flow ---------- */
+function showNote(msg,type){ const n=$('#note'); n.textContent=msg; n.className='note show '+type; }
+function hideNote(){ $('#note').className='note'; }
+
+function loadEvents(events){
+  if(!events.length){
+    showNote("Couldn't find any events. If this was a PDF, try the “paste the text instead” option.","err");
+    $('#panel').classList.remove('show'); return;
+  }
+  EVENTS=events; applyToggles(); render();
+  hideNote(); $('#panel').classList.add('show');
+  $('#panel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function handleFile(file){
+  if(!file) return;
+  if(!window.pdfjsLib){ showNote("PDF reader didn't load (no connection?). Paste the text instead.","err"); return; }
+  showNote("Reading "+file.name+"…","info");
+  try{
+    const buf=await file.arrayBuffer();
+    const lines=await pdfToLines(buf);
+    loadEvents(parseSchedule(lines));
+  }catch(err){
+    console.error(err);
+    showNote("That file couldn't be read. Try pasting the schedule text instead.","err");
+  }
+}
+
+const drop=$('#drop'), fileInput=$('#file');
+drop.onclick=e=>{ if(e.target.id!=='pasteLink') fileInput.click(); };
+fileInput.onchange=e=>handleFile(e.target.files[0]);
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{ if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+$('#pasteLink').onclick=e=>{ e.preventDefault(); $('#pasteBox').classList.toggle('show'); $('#pasteArea').focus(); };
+function parsePasted(){
+  const txt=$('#pasteArea').value.trim();
+  if(!txt){ showNote("Paste the schedule text into the box first.","err"); return; }
+  const lines=txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  loadEvents(parseSchedule(lines));
+}
+$('#parseText').onclick=parsePasted;
+$('#pasteArea').addEventListener('paste',()=>setTimeout(parsePasted,60));
+$('#pasteClip').onclick=async()=>{
+  try{
+    const t=await navigator.clipboard.readText();
+    if(t && t.trim()){ $('#pasteArea').value=t; parsePasted(); }
+    else showNote("Clipboard looks empty — paste into the box and tap Parse text.","info");
+  }catch(e){
+    showNote("This browser won't let the page read your clipboard. Tap inside the box, paste, then tap Parse text.","info");
+  }
+};
+
+$('#incReserve').onchange=()=>{applyToggles();render();};
+$('#incOff').onchange=()=>{applyToggles();render();};
+$('#tz').onchange=render;
+
+$('#dl').onclick=()=>{
+  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected to export.","err"); return; }
+  const blob=new Blob([buildICS()],{type:"text/calendar;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download="schedule.ics"; document.body.appendChild(a); a.click();
+  a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+};
+$('#clear').onclick=()=>{
+  EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value='';
+  $('#pasteBox').classList.remove('show'); fileInput.value=''; hideNote();
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+</script>
+</body>
+</html>
