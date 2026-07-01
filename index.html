@@ -142,7 +142,13 @@
   .strip .chk{padding-left:14px}
   .strip .time{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--slate);line-height:1.3}
   .strip .time .d{color:var(--ink);font-weight:600}
-  .strip .main{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+  .strip .main{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+  .strip .mrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .strip .students{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--slate);padding-left:2px}
+  .strip input.note{width:100%;max-width:440px;font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);
+    border:1px dashed var(--line);border-radius:6px;padding:5px 8px;background:transparent}
+  .strip input.note::placeholder{color:var(--slate);opacity:.75}
+  .strip input.note:focus{outline:none;border-style:solid;border-color:var(--teal);background:#FBFDFD}
   .strip input.name{
     font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--ink);
     border:1px solid transparent;border-radius:7px;padding:3px 7px;min-width:64px;width:auto;
@@ -153,6 +159,7 @@
   .tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;
     padding:2px 7px;border-radius:6px;text-transform:uppercase;white-space:nowrap}
   .tag.sup{background:var(--amber-soft);color:var(--amber)}
+  .tag.hassup{background:var(--teal-soft);color:var(--teal-dk)}
   .strip input.sim{
     font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--teal-dk);
     background:var(--teal-soft);border:1px solid transparent;border-radius:6px;padding:3px 8px;
@@ -428,7 +435,7 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-12";  // bumped each release so the app can flag updates
+const BUILD="2026.06.30-14";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -453,8 +460,10 @@ function adminCat(t){ for(const a of ADMIN) if(a.re.test(t)) return a.cat; retur
 function pad(t){ let [h,m]=t.split(':'); h=h.padStart(2,'0'); if(h==='24'){h='23';m='59';} return h+':'+m; }
 function stamp(d,t){ const [h,m]=t.split(':'); return `${d.yyyy}${d.mm}${d.dd}T${h}${m}00`; }
 function sessionLabel(t){
-  let s=(t.split('/').pop()||t);
-  s=s.replace(/\(SUPPORT\)|\(INSTR\)|\(SUPP\)/ig,'');
+  let s=String(t);
+  const rm=s.match(/\((?:SUPPORT|INSTR|SUPP)\)/i);
+  if(rm) s=s.slice(0, rm.index);
+  s=(s.split('/').pop()||s);
   s=s.replace(/\b(MEM|AOTC|MOD-D|B77[SC]\d+|B777FPT\d+)\b[\s\S]*$/i,'');
   s=s.replace(/\b\d{5,}\b/g,'');
   s=s.replace(/[;,*]/g,' ').replace(/\s+/g,' ').trim();
@@ -514,12 +523,12 @@ function parseSchedule(input){
     }
     if(c.kind==='brf'){ flush(); pend={startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:null,sim:null,role:c.role,category:'training'}; }
     else if(c.kind==='main'){
-      if(pend && pend.name===null){ pend.name=sessionLabel(seg.text); pend.sim=c.sim||'MEM'; pend.role=c.role; pend.endDate=seg.date; pend.end=seg.end; }
-      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.text),sim:c.sim||'MEM',role:c.role,category:'training'}); }
+      if(pend && pend.name===null){ pend.name=sessionLabel(seg.text); pend.desc=seg.text; pend.sim=c.sim||'MEM'; pend.role=c.role; pend.endDate=seg.date; pend.end=seg.end; }
+      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.text),desc:seg.text,sim:c.sim||'MEM',role:c.role,category:'training'}); }
     } else if(c.kind==='dbrf'){ if(pend){ if(pend.name){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); } pend=null; } }
   }
   flush();
-  events.forEach(e=>{ e.include=e.category==='training'; });
+  events.forEach(e=>{ e.include=e.category==='training'; e.students=extractStudents(e.desc||''); e.hasSupport=hasSupportPilot(e.desc); e.note=''; });
   events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   return events;
 }
@@ -541,12 +550,12 @@ function parseChanges(text){
     }
     if(c.kind==='brf'){ flush(); pend={startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:null,sim:'',role:c.role,category:'training'}; }
     else if(c.kind==='main'){
-      if(pend && pend.name===null){ pend.name=sessionLabel(seg.desc); pend.role=c.role; pend.sim=c.sim||''; pend.endDate=seg.date; pend.end=seg.end; }
-      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.desc),sim:c.sim||'',role:c.role,category:'training'}); }
+      if(pend && pend.name===null){ pend.name=sessionLabel(seg.desc); pend.desc=seg.desc; pend.role=c.role; pend.sim=c.sim||''; pend.endDate=seg.date; pend.end=seg.end; }
+      else { flush(); events.push({startDate:seg.date,start:seg.start,endDate:seg.date,end:seg.end,name:sessionLabel(seg.desc),desc:seg.desc,sim:c.sim||'',role:c.role,category:'training'}); }
     } else if(c.kind==='dbrf'){ if(pend){ if(pend.name){ pend.endDate=seg.date; pend.end=seg.end; events.push(pend); } pend=null; } }
   }
   flush();
-  events.forEach(e=>{ e.include=true; });
+  events.forEach(e=>{ e.include=true; e.students=extractStudents(e.desc||''); e.hasSupport=hasSupportPilot(e.desc); e.note=''; });
   events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   return events;
 }
@@ -575,9 +584,14 @@ function render(){
       <div class="chk"><input type="checkbox" ${e.include?'checked':''} data-i="${idx}" class="inc"></div>
       <div class="time">${timeHtml}</div>
       <div class="main">
-        <input class="name" data-i="${idx}" value="${esc(e.name)}" spellcheck="false" size="${Math.max(4,e.name.length)}">
-        ${e.role==='support'?'<span class="tag sup">Support</span>':''}
-        <input class="sim" data-i="${idx}" value="${esc(e.sim)}" spellcheck="false">
+        <div class="mrow">
+          <input class="name" data-i="${idx}" value="${esc(e.name)}" spellcheck="false" size="${Math.max(4,e.name.length)}">
+          ${e.role==='support'?'<span class="tag sup">Support</span>':''}
+          ${e.hasSupport?'<span class="tag hassup">+ support pilot</span>':''}
+          <input class="sim" data-i="${idx}" value="${esc(e.sim)}" spellcheck="false">
+        </div>
+        ${e.students&&e.students.length?`<div class="students">\u{1F464} ${e.students.map(esc).join('  \u00b7  ')}</div>`:''}
+        <input class="note" data-i="${idx}" value="${esc(e.note||'')}" placeholder="notes / phone # \u2192 saved into the calendar entry" spellcheck="false">
       </div>
       <a class="g" href="${gLink(e)}" target="_blank" rel="noopener" title="Add this one to Google Calendar">G ↗</a>`;
     box.appendChild(row);
@@ -591,6 +605,9 @@ function render(){
   box.querySelectorAll('.sim').forEach(n=>n.oninput=ev=>{
     EVENTS[+ev.target.dataset.i].sim=ev.target.value;
   });
+  box.querySelectorAll('.note').forEach(n=>n.oninput=ev=>{
+    EVENTS[+ev.target.dataset.i].note=ev.target.value;
+  });
   const sel=EVENTS.filter(e=>e.include);
   const tr=sel.filter(e=>e.category==='training').length;
   const rs=sel.filter(e=>e.category==='reserve').length;
@@ -602,6 +619,28 @@ function render(){
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 /* ---------- export ---------- */
+function extractStudents(t){
+  if(!t) return [];
+  const skip=/^(B747|B777|B767|B757|MEM|AOTC|MOD|IT|CA|FO|B2B|MV|CQ|OPS|MAN|LCT|CMT|BRF|DBRF|REQ|FPM|CLOE|LOE|PRO|API|UPRT|RA|RB|RSV|AVAIL|XDAY|BLK|BLKAM|BLKPM|FLY|SUPPORT|INSTR|SUPP|REQUAL|MEMCQ|RECURRENT|INITIAL|TRANSITION|UPGRADE|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|APRIL|JANUARY|FEBRUARY|MARCH|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)$/i;
+  const out=[], seen={};
+  const re=/([A-Za-z][A-Za-z.'\-]+(?:\s+[A-Za-z][A-Za-z.'\-]+)?)\s+(\d{5,8})\b/g; let m;
+  while((m=re.exec(t))){
+    const words=m[1].split(/\s+/).filter(w=>!skip.test(w));
+    if(!words.length) continue;
+    const s=words.join(' ')+' '+m[2];
+    if(!seen[s]){ seen[s]=1; out.push(s); }
+  }
+  return out;
+}
+function hasSupportPilot(desc){ return /\bsupport\b/i.test(String(desc||'').replace(/\((?:SUPPORT|INSTR|SUPP)\)/ig,'')); }
+function eventNotes(e){
+  const lines=[];
+  if(e.category==='training') lines.push(e.role==='support'?'Your role: Support pilot':'Your role: Instructor');
+  if(e.hasSupport) lines.push('You have a support pilot on this session');
+  if(e.students && e.students.length) lines.push('Student'+(e.students.length>1?'s':'')+': '+e.students.join(', '));
+  if(e.note && e.note.trim()) lines.push(e.note.trim());
+  return lines.join('\n');
+}
 function summary(e){ return e.name + (e.role==='support' ? ' (Support)' : ''); }
 function icsEsc(s){ return String(s).replace(/[\\;,]/g,m=>'\\'+m).replace(/\n/g,'\\n'); }
 
@@ -654,6 +693,8 @@ function buildICS(){
       `DTEND;TZID=${zone}:${stamp(e.endDate,e.end)}`,
       `SUMMARY:${icsEsc(summary(e))}`);
     if(e.sim) L.push(`LOCATION:${icsEsc(e.sim)}`);
+    const _d=eventNotes(e);
+    if(_d) L.push(`DESCRIPTION:${icsEsc(_d)}`);
     L.push("END:VEVENT");
   });
   L.push("END:VCALENDAR");
@@ -722,7 +763,7 @@ $('#addBtn').onclick=()=>{
   const start=pad($('#addStart').value||'08:00');
   const end=pad($('#addEnd').value||'17:00');
   const label=($('#addLabel').value.trim())||'Working';
-  EVENTS.push({startDate:{mm,dd,yyyy},endDate:{mm,dd,yyyy},start,end,name:label,sim:'',role:'instr',category:'custom',include:true});
+  EVENTS.push({startDate:{mm,dd,yyyy},endDate:{mm,dd,yyyy},start,end,name:label,sim:'',role:'instr',category:'custom',include:true,students:[],note:''});
   EVENTS.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   render();
   showNote("“"+label+"” added on "+mm+"/"+dd+". Tee time secured. The calendar says sim; your 7‑iron knows the truth. We saw nothing.","info");
