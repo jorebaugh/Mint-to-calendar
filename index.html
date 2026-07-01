@@ -259,7 +259,8 @@
   .updatebar{display:none;align-items:center;justify-content:space-between;gap:12px;
     background:var(--teal);color:#fff;border-radius:12px;padding:11px 15px;margin-top:14px;
     font-size:13.5px;font-weight:500}
-  .updatebar.show{display:flex}
+  .updatebar.show{display:flex;animation:updpulse 2.2s ease-in-out infinite}
+  @keyframes updpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 4px rgba(124,58,237,.22)}}
   .updatebar b{font-weight:700}
   .updatebar button{flex:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;
     background:#fff;color:var(--teal-dk);border:none;border-radius:8px;padding:7px 14px;cursor:pointer}
@@ -297,7 +298,7 @@
 <body>
 <div class="wrap">
   <div class="updatebar" id="updateBar">
-    <span><b>A newer version is available.</b></span>
+    <span><b>The app was updated</b> — refresh for the latest.</span>
     <button id="updateBtn">Refresh now</button>
   </div>
   <header>
@@ -332,6 +333,11 @@
     <div class="tbody">If you're viewing this in a browser, just tap <a id="reloadFresh" href="#">Reload the latest</a>. If you saved it to your home screen, refresh the icon: <b>copy the link below</b>, delete the icon (press &amp; hold it → <b>Remove App</b> → <b>Delete from Home Screen</b>), then open the link in Safari and add it again.
       <div class="linkrow"><code id="pageUrl">…</code><button id="copyLink">Copy link</button></div>
     </div>
+  </details>
+
+  <details class="trouble whatsnew">
+    <summary>What’s new</summary>
+    <div class="tbody" id="whatsnewBody"></div>
   </details>
 
   <div class="inputzone">
@@ -435,7 +441,8 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-14";  // bumped each release so the app can flag updates
+const BUILD="2026.06.30-16";
+const WHATSNEW="This version pulls student names and employee numbers into each event’s notes, flags sessions where you have a support pilot, adds a note box on every event for phone numbers or reminders, reads mid‑month “changes” emails, and lets you add your own blocks.";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -621,14 +628,28 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').r
 /* ---------- export ---------- */
 function extractStudents(t){
   if(!t) return [];
-  const skip=/^(B747|B777|B767|B757|MEM|AOTC|MOD|IT|CA|FO|B2B|MV|CQ|OPS|MAN|LCT|CMT|BRF|DBRF|REQ|FPM|CLOE|LOE|PRO|API|UPRT|RA|RB|RSV|AVAIL|XDAY|BLK|BLKAM|BLKPM|FLY|SUPPORT|INSTR|SUPP|REQUAL|MEMCQ|RECURRENT|INITIAL|TRANSITION|UPGRADE|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|APRIL|JANUARY|FEBRUARY|MARCH|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)$/i;
+  t=String(t);
+  const skip=/^(B747|B777|B767|B757|MEM|AOTC|MOD|MOD-D|IT|CA|FO|B2B|MV|CQ|OPS|MAN|LCT|CMT|CLOE|LOE|PRO|API|UPRT|BRF|DBRF|REQ|FPM|TOUR|VP|CORP|CONTROL|DAY|RA|RB|RSV|AVAIL|XDAY|BLK|BLKAM|BLKPM|FLY|SUPPORT|INSTR|SUPP|REQUAL|MEMCQ|ANCCQ|RECURRENT|INITIAL|TRANSITION|UPGRADE|DO|NOT|MOVE|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|APRIL|JANUARY|FEBRUARY|MARCH|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)$/i;
+  const isDev=/^B77[SC]\d+$|^B777FPT\d+$/i;
   const out=[], seen={};
-  const re=/([A-Za-z][A-Za-z.'\-]+(?:\s+[A-Za-z][A-Za-z.'\-]+)?)\s+(\d{5,8})\b/g; let m;
-  while((m=re.exec(t))){
+  const add=(name,num)=>{
+    name=(name||'').trim();
+    if(!name||skip.test(name)||isDev.test(name)) return;
+    const s=num?name+' '+num:name+' (no emp #)';
+    if(!seen[s.toLowerCase()]){ seen[s.toLowerCase()]=1; out.push(s); }
+  };
+  const reNum=/([A-Za-z][A-Za-z.'\-]+(?:\s+[A-Za-z][A-Za-z.'\-]+)?)\s+(\d{5,8})\b/g; let m;
+  while((m=reNum.exec(t))){
     const words=m[1].split(/\s+/).filter(w=>!skip.test(w));
-    if(!words.length) continue;
-    const s=words.join(' ')+' '+m[2];
-    if(!seen[s]){ seen[s]=1; out.push(s); }
+    if(words.length) add(words.join(' '), m[2]);
+  }
+  if(/\bIT\b/.test(t)){
+    let s=t; const rm=s.match(/\((?:SUPPORT|INSTR|SUPP)\)/i); if(rm) s=s.slice(0,rm.index);
+    const segs=s.split('/'); segs.pop();
+    for(const seg of segs){
+      const mm=seg.match(/([A-Za-z][A-Za-z.'\-]{2,})\s*(\d{5,8})?\s*$/);
+      if(mm) add(mm[1], mm[2]);
+    }
   }
   return out;
 }
@@ -781,6 +802,7 @@ async function checkUpdate(){
 const _ub=$('#updateBtn'); if(_ub) _ub.onclick=()=>location.replace(_bust());
 checkUpdate();
 const _vs=$('#verStamp'); if(_vs) _vs.textContent=BUILD;
+const _wn=$('#whatsnewBody'); if(_wn) _wn.textContent=WHATSNEW;
 const _purl=location.origin+location.pathname;
 const _pu=$('#pageUrl'); if(_pu) _pu.textContent=_purl;
 const _cl=$('#copyLink');
