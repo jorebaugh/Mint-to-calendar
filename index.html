@@ -351,7 +351,7 @@
   <ol class="steps">
     <li><span class="n">1</span><div><b>Copy your schedule email.</b> Open the email — the full “your schedule changed” schedule <i>or</i> a mid‑month “changes” list, both work — select all, and copy it. The whole thing, headers and all, is fine.</div></li>
     <li><span class="n">2</span><div><b>Paste it above</b> and tap <b>Make my calendar</b>. Each brief‑to‑debrief becomes one event, named by its period with the sim as the location. Click any name or sim to fix it; the toggles up top control reserve, available, and off/block days.</div></li>
-    <li><span class="n">3</span><div><b>Send it to your calendar.</b> On <b>iPhone/iPad</b>, tap <b>Add to Apple Calendar</b> and pick Calendar in the share sheet. On a <b>Mac/PC</b> the <code>.ics</code> downloads — open it. Or tap <code>G ↗</code> on any row for Google.</div></li>
+    <li><span class="n">3</span><div><b>Send it to your calendar.</b> On <b>iPhone/iPad in Safari</b>, tap <b>Add to Apple Calendar</b> — Calendar opens with an <b>Add All</b> button. In <b>Chrome or Firefox</b> (which can’t open calendar files on iPhone), tap <b>Download .ics</b>, open it from the <b>Files</b> app, then <b>Add All</b>. On a <b>Mac/PC</b> the <code>.ics</code> downloads — open it. Or tap <code>G ↗</code> on any row for Google.</div></li>
   </ol>
 
   <div class="note" id="note"></div>
@@ -397,7 +397,8 @@
       <button class="btn ghost" id="clear">Start over</button>
     </div>
     <p class="help">
-      <b>iPhone / iPad:</b> tap <b>Add to Apple Calendar</b>, then choose <b>Calendar</b> in the share sheet to add them all. &nbsp;
+      <b>iPhone / iPad (Safari):</b> tap <b>Add to Apple Calendar</b>, then <b>Add All</b> when Calendar opens. &nbsp;
+      <b>iPhone with Chrome / Firefox:</b> these can’t open calendar files — tap <b>Download .ics</b>, open it from the <b>Files</b> app, then <b>Add All</b> (or open this page in <b>Safari</b> for one‑tap adding). &nbsp;
       <b>Mac / Windows:</b> the <code>.ics</code> downloads — open it to add to Calendar or Outlook. &nbsp;
       <b>Google:</b> tap <code>G ↗</code> on a row, or import the <code>.ics</code> at Google Calendar → Settings → Import.
     </p>
@@ -441,7 +442,7 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-16";
+const BUILD="2026.06.30-18";
 const WHATSNEW="This version pulls student names and employee numbers into each event’s notes, flags sessions where you have a support pilot, adds a note box on every event for phone numbers or reminders, reads mid‑month “changes” emails, and lets you add your own blocks.";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -813,31 +814,43 @@ if(_cl) _cl.onclick=async()=>{
   setTimeout(()=>{ _cl.textContent='Copy link'; _cl.classList.remove('copied'); },1800);
 };
 
-async function exportICS(){
-  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected \u2014 tick at least one event above.","err"); return; }
-  const ics=buildICS();
-  const fname="schedule.ics";
-  // iPhone/iPad: hand the .ics to the share sheet so you can pick "Calendar / Add All to Calendar"
-  try{
-    if(window.File && navigator.canShare){
-      const file=new File([ics],fname,{type:"text/calendar"});
-      if(navigator.canShare({files:[file]})){
-        await navigator.share({files:[file]});
-        return;
-      }
-    }
-  }catch(err){
-    if(err && err.name==='AbortError') return;   // user closed the share sheet
-    // otherwise fall through to a normal download
-  }
-  // Mac / Windows / fallback: download the file (open it to add to Calendar, or import to Outlook/Google)
-  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
-  const a=document.createElement('a'); a.href=url; a.download=fname;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),8000);
+function _icsOrWarn(){
+  if(!EVENTS.some(e=>e.include)){ showNote("Nothing selected \u2014 tick at least one event above.","err"); return null; }
+  return buildICS();
 }
-$('#addApple').onclick=exportICS;
-$('#dl').onclick=exportICS;
+const _UA=navigator.userAgent||'';
+const IS_IOS = /iP(hone|ad|od)/i.test(_UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const IS_SAFARI = IS_IOS && /Safari/.test(_UA) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line|DuckDuckGo/i.test(_UA);
+const IS_STANDALONE = navigator.standalone===true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+function _iosSavedMsg(){
+  if(IS_IOS && !IS_SAFARI)
+    showNote("Chrome on iPhone can\u2019t hand a calendar file straight to Calendar. Saved as schedule.ics \u2014 open the Files app, tap it, then tap \u201cAdd All.\u201d Tip: open this page in Safari and it adds in one tap.","ok");
+  else if(IS_IOS)
+    showNote("Saved as schedule.ics. Open the Files app, tap it, then tap \u201cAdd All\u201d to drop everything into Apple Calendar.","ok");
+}
+function saveICS(){
+  const ics=_icsOrWarn(); if(ics==null) return;
+  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
+  const a=document.createElement('a'); a.href=url; a.download="schedule.ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),9000);
+  _iosSavedMsg();
+}
+function addToCalendar(){
+  const ics=_icsOrWarn(); if(ics==null) return;
+  // Only real Safari can open an .ics and show Apple's native "Add All" screen. Chrome/Firefox/in-app/standalone on iOS cannot -> save + open from Files.
+  if(IS_IOS && IS_SAFARI && !IS_STANDALONE){
+    const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
+    const a=document.createElement('a'); a.href=url;   // no download attr, no target
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),15000);
+    showNote("Apple Calendar should open with an \u201cAdd All\u201d button.","ok");
+    return;
+  }
+  saveICS();
+}
+$('#addApple').onclick=addToCalendar;
+$('#dl').onclick=saveICS;
 $('#clear').onclick=()=>{
   EVENTS=[]; $('#panel').classList.remove('show'); $('#pasteArea').value=''; hideNote();
   window.scrollTo({top:0,behavior:'smooth'});
