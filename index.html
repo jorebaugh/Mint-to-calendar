@@ -81,7 +81,7 @@
   .paste.show{display:block}
   textarea{
     width:100%;min-height:150px;resize:vertical;border:1px solid var(--line);
-    border-radius:12px;padding:13px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    border-radius:12px;padding:13px;font-family:'JetBrains Mono',monospace;font-size:16px;
     color:var(--ink);background:var(--surface);
   }
   textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
@@ -145,12 +145,12 @@
   .strip .main{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
   .strip .mrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .strip .students{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--slate);padding-left:2px}
-  .strip input.note{width:100%;max-width:440px;font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);
+  .strip input.note{width:100%;max-width:440px;font-family:'Inter',sans-serif;font-size:16px;color:var(--ink);
     border:1px dashed var(--line);border-radius:6px;padding:5px 8px;background:transparent}
   .strip input.note::placeholder{color:var(--slate);opacity:.75}
   .strip input.note:focus{outline:none;border-style:solid;border-color:var(--teal);background:#FBFDFD}
   .strip input.name{
-    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:var(--ink);
     border:1px solid transparent;border-radius:7px;padding:3px 7px;min-width:64px;width:auto;
     background:transparent;
   }
@@ -161,9 +161,9 @@
   .tag.sup{background:var(--amber-soft);color:var(--amber)}
   .tag.hassup{background:var(--teal-soft);color:var(--teal-dk)}
   .strip input.sim{
-    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--teal-dk);
+    font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:var(--teal-dk);
     background:var(--teal-soft);border:1px solid transparent;border-radius:6px;padding:3px 8px;
-    width:88px;text-align:center;
+    width:auto;min-width:56px;max-width:140px;text-align:center;
   }
   .strip input.sim:hover{border-color:#BFE0E2}
   .strip input.sim:focus{outline:none;border-color:var(--teal)}
@@ -214,9 +214,12 @@
     background:var(--line-soft);padding:1px 6px;border-radius:5px}
 
   /* Tip jar */
-  .tip{margin-top:22px;background:linear-gradient(180deg,#FBFDFD,var(--surface));
-    border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;
-    flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between}
+  .tip{margin-top:22px;background:linear-gradient(180deg,#FFF6EE,var(--amber-soft));
+    border:1.5px solid #E7A968;border-radius:14px;padding:18px 20px;display:flex;
+    flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between;
+    box-shadow:0 5px 18px rgba(226,103,15,.14)}
+  .tipcopy{flex:1 1 320px}
+  .tipeyebrow{flex-basis:100%;width:100%;margin:0 0 4px;text-align:center;font-size:15.5px;font-weight:800;color:var(--amber)}
   .tip p{margin:0;font-size:13.5px;color:var(--slate);max-width:56ch}
   .tip p b{color:var(--ink);font-weight:600}
   .tip a.venmo{flex:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
@@ -414,7 +417,10 @@
     </details>
 
     <div class="tip">
+      <p class="tipeyebrow">Tip Jar for the Hero That Built This</p>
+      <div class="tipcopy">
       <p><b>Did this just save you from transcribing an entire bid period into your calendar, one soul‑crushing event at a time?</b> The guy who built it — Jesse — accepts tips, compliments, and being left completely alone, in roughly equal measure. A tip won't help you avoid the zero‑dark‑thirty briefs or move you up the seniority list, but it will make a man you may have never met nod quietly in approval. The app works the same either way. You'll just feel a little smugger.</p>
+      </div>
       <div class="btns">
         <a class="venmo" href="https://venmo.com/u/Jesse-Orebaugh" target="_blank" rel="noopener">Venmo</a>
         <a class="paypal" href="https://www.paypal.me/jesseorebaugh" target="_blank" rel="noopener">PayPal</a>
@@ -452,7 +458,7 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-19";
+const BUILD="2026.06.30-22";
 const WHATSNEW="This version pulls student names and employee numbers into each event’s notes, flags sessions where you have a support pilot, adds a note box on every event for phone numbers or reminders, reads mid‑month “changes” emails, and lets you add your own blocks.";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -603,10 +609,10 @@ function render(){
       <div class="time">${timeHtml}</div>
       <div class="main">
         <div class="mrow">
-          <input class="name" data-i="${idx}" value="${esc(e.name)}" spellcheck="false" size="${Math.max(4,e.name.length)}">
+          <input class="name" data-i="${idx}" value="${esc(e.name)}" spellcheck="false" size="${Math.max(4,e.name.length+2)}">
           ${e.role==='support'?'<span class="tag sup">Support</span>':''}
           ${e.hasSupport?'<span class="tag hassup">+ support pilot</span>':''}
-          <input class="sim" data-i="${idx}" value="${esc(e.sim)}" spellcheck="false">
+          <input class="sim" data-i="${idx}" value="${esc(e.sim)}" spellcheck="false" size="${Math.max(4,(e.sim||'').length+1)}">
         </div>
         ${e.students&&e.students.length?`<div class="students">\u{1F464} ${e.students.map(esc).join('  \u00b7  ')}</div>`:''}
         <input class="note" data-i="${idx}" value="${esc(e.note||'')}" placeholder="notes / phone # \u2192 saved into the calendar entry" spellcheck="false">
@@ -618,10 +624,10 @@ function render(){
     EVENTS[+ev.target.dataset.i].include=ev.target.checked; render();
   });
   box.querySelectorAll('.name').forEach(n=>n.oninput=ev=>{
-    EVENTS[+ev.target.dataset.i].name=ev.target.value; ev.target.size=Math.max(4,ev.target.value.length);
+    EVENTS[+ev.target.dataset.i].name=ev.target.value; ev.target.size=Math.max(4,ev.target.value.length+2);
   });
   box.querySelectorAll('.sim').forEach(n=>n.oninput=ev=>{
-    EVENTS[+ev.target.dataset.i].sim=ev.target.value;
+    EVENTS[+ev.target.dataset.i].sim=ev.target.value; ev.target.size=Math.max(4,ev.target.value.length+1);
   });
   box.querySelectorAll('.note').forEach(n=>n.oninput=ev=>{
     EVENTS[+ev.target.dataset.i].note=ev.target.value;
