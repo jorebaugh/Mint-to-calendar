@@ -191,6 +191,11 @@
   .platformtip b{color:var(--teal-dk)}
   .platformtip.hot{background:var(--amber-soft);color:#8A3E06;border-color:#EBCBA0}
   .platformtip.hot b{color:#8A3E06}
+  .viewtoggle{display:flex;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:12px;width:fit-content;max-width:100%}
+  .viewtoggle .vt{border:none;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--slate);padding:7px 13px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .viewtoggle .vt.active{background:var(--teal);color:#fff}
+  .removedbox{background:var(--amber-soft);border:1px solid #EBCBA0;color:#7A4A12;border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:13px;line-height:1.5}
+  .how2 .hgrid{margin-top:4px}
   .help b{color:var(--ink);font-weight:600}
   .help code{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--line-soft);
     padding:1px 6px;border-radius:5px}
@@ -318,10 +323,18 @@
 
   <div class="platformtip" id="platTip"></div>
 
+  <div class="inputzone">
+    <textarea id="pasteArea" placeholder="Paste your whole schedule email here…"></textarea>
+    <div class="inputbtns">
+      <button class="btn primary" id="parseText">Make my calendar →</button>
+      <button class="btn ghost" id="pasteClip">Paste from clipboard</button>
+    </div>
+  </div>
 
-  <section class="how">
-    <h2>How it works</h2>
-    <p class="sub">Three things happen, none of which involve you typing.</p>
+
+  <details class="trouble how2">
+    <summary>How it works</summary>
+    <div class="tbody">
     <div class="hgrid">
       <div class="hcard">
         <b>Reads the email</b>
@@ -336,7 +349,8 @@
         <p>All of this runs inside this browser tab. No server, no account, no upload, no “we value your privacy” banner that legally means the opposite. Close the tab and it forgets you existed. Your roster's secrets die with it.</p>
       </div>
     </div>
-  </section>
+    </div>
+  </details>
 
   <details class="trouble">
     <summary>Out of date, or not updating?</summary>
@@ -350,13 +364,7 @@
     <div class="tbody" id="whatsnewBody"></div>
   </details>
 
-  <div class="inputzone">
-    <textarea id="pasteArea" placeholder="Paste your whole schedule email here…"></textarea>
-    <div class="inputbtns">
-      <button class="btn primary" id="parseText">Make my calendar →</button>
-      <button class="btn ghost" id="pasteClip">Paste from clipboard</button>
-    </div>
-  </div>
+
 
   <ol class="steps">
     <li><span class="n">1</span><div><b>Copy your schedule email.</b> Open the email — the full “your schedule changed” schedule <i>or</i> a mid‑month “changes” list, both work — select all, and copy it. The whole thing, headers and all, is fine.</div></li>
@@ -367,6 +375,11 @@
   <div class="note" id="note"></div>
 
   <section class="panel" id="panel">
+    <div class="viewtoggle" id="viewToggle" style="display:none">
+      <button class="vt active" id="vtChanges">Only what changed</button>
+      <button class="vt" id="vtFull">Whole schedule</button>
+    </div>
+    <div class="removedbox" id="removedBox" style="display:none"></div>
     <div class="bar">
       <div class="grp">
         <span>Times in</span>
@@ -458,12 +471,14 @@
 
 <script>
 const $ = s => document.querySelector(s);
-const BUILD="2026.06.30-23";
-const WHATSNEW="This version pulls student names and employee numbers into each event’s notes, flags sessions where you have a support pilot, adds a note box on every event for phone numbers or reminders, reads mid‑month “changes” emails, and lets you add your own blocks.";  // bumped each release so the app can flag updates
+const BUILD="2026.06.30-24";
+const WHATSNEW="New: when you paste a \u201cchanges\u201d email, you can import just the added or changed sessions instead of re\u2011adding your whole month \u2014 tap \u201cOnly what changed.\u201d Events now use stable IDs, so re\u2011importing updates them in place instead of stacking duplicates, and removed sessions are listed so you can delete them by hand. The paste box also moved up to the top.";  // bumped each release so the app can flag updates
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 let EVENTS = [];
+let FULL_EVENTS = [], CHANGE_EVENTS = [], REMOVED = [];
+let VIEW = 'full';
 let LAST_REMOVED = [];
 
 /* ---------- paste text -> events ---------- */
@@ -483,6 +498,11 @@ const ADMIN=[
 function adminCat(t){ for(const a of ADMIN) if(a.re.test(t)) return a.cat; return null; }
 function pad(t){ let [h,m]=t.split(':'); h=h.padStart(2,'0'); if(h==='24'){h='23';m='59';} return h+':'+m; }
 function stamp(d,t){ const [h,m]=t.split(':'); return `${d.yyyy}${d.mm}${d.dd}T${h}${m}00`; }
+function uidFor(e){
+  const key=[e.startDate.yyyy,e.startDate.mm,e.startDate.dd,e.start,(e.name||'').trim().toUpperCase(),(e.sim||'').trim().toUpperCase(),e.category||''].join('|');
+  let h=5381; for(let i=0;i<key.length;i++){ h=((h*33)^key.charCodeAt(i))>>>0; }
+  return 'mtc-'+h.toString(36)+'@mint-to-cal';
+}
 function sessionLabel(t){
   let s=String(t);
   const rm=s.match(/\((?:SUPPORT|INSTR|SUPP)\)/i);
@@ -583,6 +603,45 @@ function parseChanges(text){
   events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
   return events;
 }
+function groupItems(items){
+  const events=[]; let pend=null;
+  const flush=()=>{ if(pend){ if(pend.name) events.push(pend); pend=null; } };
+  for(const it of items){
+    const c=classify(it.desc);
+    if(c.adminCat && c.kind==='main' && !it.desc.includes('/')){
+      flush(); events.push({startDate:it.startDate,start:it.start,endDate:it.endDate,end:it.end,name:sessionLabel(it.desc),desc:it.desc,sim:c.sim||'',role:c.role,category:c.adminCat}); continue;
+    }
+    if(c.kind==='brf'){ flush(); pend={startDate:it.startDate,start:it.start,endDate:it.endDate,end:it.end,name:null,sim:'',desc:'',role:c.role,category:'training'}; }
+    else if(c.kind==='main'){
+      if(pend && pend.name===null){ pend.name=sessionLabel(it.desc); pend.desc=it.desc; pend.sim=c.sim||''; pend.role=c.role; pend.endDate=it.endDate; pend.end=it.end; }
+      else { flush(); events.push({startDate:it.startDate,start:it.start,endDate:it.endDate,end:it.end,name:sessionLabel(it.desc),desc:it.desc,sim:c.sim||'',role:c.role,category:'training'}); }
+    } else if(c.kind==='dbrf'){ if(pend){ if(pend.name){ pend.endDate=it.endDate; pend.end=it.end; events.push(pend); } pend=null; } }
+  }
+  flush();
+  return events;
+}
+function parseChangeBlock(input){
+  const text=normalize(Array.isArray(input)?input.join('\n'):input);
+  const mk=text.search(/in the following please find your schedule/i);
+  let region = mk>=0 ? text.slice(0,mk) : text;
+  const ch=region.search(/find the changes in the following/i);
+  if(ch>=0) region=region.slice(ch);
+  const re=/(Added|Removed|Changed)\s+(.*?)\(\s*(\d{2})\.(\d{2})\.(\d{4})\s+(\d{1,2}:\d{2})\s*-\s*(?:(\d{2})\.(\d{2})\.(\d{4})\s+)?(\d{1,2}:\d{2})\s*\)/gi;
+  const items=[], removed=[]; let m;
+  while((m=re.exec(region))){
+    const action=m[1].toLowerCase();
+    const desc=m[2].replace(/\s+/g,' ').trim();
+    const sD={mm:m[3],dd:m[4],yyyy:m[5]};
+    const eD=m[7]?{mm:m[7],dd:m[8],yyyy:m[9]}:sD;
+    const it={action,desc,startDate:sD,start:pad(m[6]),endDate:eD,end:pad(m[10])};
+    if(action==='removed') removed.push(it); else items.push(it);
+  }
+  const events=groupItems(items);
+  events.forEach(e=>{ e.include=true; e.students=extractStudents(e.desc||''); e.hasSupport=hasSupportPilot(e.desc); e.note=''; e.isChange=true; });
+  events.sort((a,b)=>stamp(a.startDate,a.start).localeCompare(stamp(b.startDate,b.start)));
+  const removedList=removed.map(r=>({label:sessionLabel(r.desc)||r.desc, md:(+r.startDate.mm)+'/'+(+r.startDate.dd), start:r.start, end:r.end}));
+  return {events, removed:removedList};
+}
 function wd(d){ return WD[new Date(+d.yyyy,+d.mm-1,+d.dd).getDay()]; }
 
 /* ---------- render ---------- */
@@ -639,6 +698,13 @@ function render(){
   const av=sel.filter(e=>e.category==='avail').length;
   const cu=sel.filter(e=>e.category==='custom').length;
   $('#count').innerHTML=`<b>${sel.length}</b> selected &nbsp;·&nbsp; ${tr} training · ${rs} reserve · ${av} avail · ${of} off${cu?' · '+cu+' added':''}`;
+  const rb=$('#removedBox');
+  if(rb){
+    if(REMOVED && REMOVED.length){
+      rb.innerHTML='<b>Also removed from your schedule.</b> The app can\u2019t delete calendar entries, so remove these by hand: '+REMOVED.map(r=>esc(r.label)+' '+r.md+' ('+r.start+'\u2013'+r.end+')').join('; ')+'.';
+      rb.style.display='';
+    } else rb.style.display='none';
+  }
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
@@ -725,7 +791,7 @@ function buildICS(){
            "CALSCALE:GREGORIAN","METHOD:PUBLISH", VTZ[zone]];
   EVENTS.filter(e=>e.include).forEach((e,i)=>{
     L.push("BEGIN:VEVENT",
-      `UID:sched-${stamp(e.startDate,e.start)}-${i}@instructor-tool`,
+      `UID:${uidFor(e)}`,
       `DTSTAMP:${now}`,
       `DTSTART;TZID=${zone}:${stamp(e.startDate,e.start)}`,
       `DTEND;TZID=${zone}:${stamp(e.endDate,e.end)}`,
@@ -753,14 +819,12 @@ function showNote(msg,type){ const n=$('#note'); n.textContent=msg; n.className=
 function hideNote(){ $('#note').className='note'; }
 
 function loadEvents(events){
-  if(!events.length){
+  if((!events||!events.length) && !(REMOVED&&REMOVED.length)){
     showNote("Hmm — I didn't find any events in that. Two things to check: (1) copy the WHOLE email — tap inside it, Select All, Copy — including the schedule list further down, and (2) make sure you’re on the latest version, shown at the very bottom of this page.","err");
     $('#panel').classList.remove('show'); return;
   }
-  EVENTS=events; applyToggles(); render();
-  if(LAST_REMOVED && LAST_REMOVED.length)
-    showNote("Also removed from your schedule \u2014 you may want to delete these from your calendar: "+LAST_REMOVED.join(', ')+".","info");
-  else hideNote();
+  EVENTS=events||[]; applyToggles(); render();
+  hideNote();
   $('#panel').classList.add('show');
   try{ $('#panel').scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
 }
@@ -768,9 +832,36 @@ function loadEvents(events){
 function parsePasted(){
   const txt=$('#pasteArea').value;
   if(!txt.trim()){ showNote("Paste your schedule email into the box first.","err"); return; }
-  loadEvents(parseSchedule(txt));
+  const hasMarker=/in the following please find your schedule/i.test(txt);
+  FULL_EVENTS = parseSchedule(txt);
+  const cb = parseChangeBlock(txt);
+  CHANGE_EVENTS = cb.events; REMOVED = cb.removed;
+  const combined = hasMarker && CHANGE_EVENTS.length>0;
+  if(combined) enrichChanges();
+  VIEW = combined ? 'changes' : 'full';
+  showViewToggle(combined);
+  loadEvents(VIEW==='changes' ? CHANGE_EVENTS : FULL_EVENTS);
+}
+function enrichChanges(){
+  CHANGE_EVENTS.forEach(ce=>{
+    const fe=FULL_EVENTS.find(f=> f.startDate.mm===ce.startDate.mm && f.startDate.dd===ce.startDate.dd && f.start===ce.start && String(f.name).trim().toUpperCase()===String(ce.name).trim().toUpperCase());
+    if(fe){ if(!ce.sim && fe.sim) ce.sim=fe.sim; if(fe.students&&fe.students.length) ce.students=fe.students; ce.hasSupport=ce.hasSupport||fe.hasSupport; }
+  });
+}
+function showViewToggle(show){
+  const t=$('#viewToggle'); if(!t) return;
+  t.style.display = show ? 'flex' : 'none';
+  const c=$('#vtChanges'), f=$('#vtFull');
+  if(c) c.classList.toggle('active', VIEW==='changes');
+  if(f) f.classList.toggle('active', VIEW==='full');
+}
+function switchView(v){
+  VIEW=v;
+  EVENTS = v==='changes' ? CHANGE_EVENTS : FULL_EVENTS;
+  applyToggles(); render(); showViewToggle(true);
 }
 $('#parseText').onclick=parsePasted;
+{ const c=$('#vtChanges'), f=$('#vtFull'); if(c) c.onclick=()=>switchView('changes'); if(f) f.onclick=()=>switchView('full'); }
 let _ptimer;
 function maybeAutoParse(){
   const v=$('#pasteArea').value;
